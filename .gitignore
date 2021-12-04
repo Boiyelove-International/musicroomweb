@@ -1,4 +1,4 @@
 .bienv/
 *.py[co]
 .env
-*.sqlite3
+# *.sqlite3
