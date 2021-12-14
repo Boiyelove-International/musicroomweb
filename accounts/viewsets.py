@@ -42,13 +42,15 @@ class CustomAuthToken(ObtainAuthToken):
 		serializer = self.serializer_class(
 			data = request.data,
 			context ={'request': request})
+		print("request.data is", request.data)
 		serializer.is_valid(raise_exception=True)
 		user = serializer.validated_data['user']
+		print("user is", user)
 		token, created = Token.objects.get_or_create(user=user)
 		try:
 			obj, created = EventOrganizer.objects.get_or_create(user=user)
 		except:
-			phone_number = None
+			pass
 
 		return Response({
 					'token': token.key,

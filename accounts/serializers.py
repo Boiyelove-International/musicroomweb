@@ -27,3 +27,9 @@ class UserSerializer(serializers.ModelSerializer):
 				fields = ['username', 'email']
 				)
 			]
+
+
+class NotificationsSerializer(serializers.ModelSerializer):
+	class Meta:
+		fields = ["content"]
+
