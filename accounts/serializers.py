@@ -4,6 +4,7 @@ from rest_framework.validators import UniqueTogetherValidator
 from .models import EventOrganizer, EmailAddress, PasswordResetRequest
 
 
+
 class UserSerializer(serializers.ModelSerializer):
 	display_name = serializers.CharField(max_length=30)
 
@@ -70,7 +71,7 @@ class PasswordChangeSerializer(serializers.Serializer):
 	def validate_old_password(self, value):
 		user = self.get_user()
 		if not user.check_password(value):
-			raise serializers.ValidationError("password is incrrect")
+			raise serializers.ValidationError("password is incorrect")
 		return value
 		
 

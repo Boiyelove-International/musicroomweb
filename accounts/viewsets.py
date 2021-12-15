@@ -4,7 +4,7 @@ from rest_framework.views import APIView, Response
 from accounts.models import EventOrganizer, EmailAddress
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from .serializers import UserSerializer
+from .serializers import UserSerializer, PasswordChangeSerializer
 
 
 
@@ -77,25 +77,36 @@ class UserDetailView(APIView):
 			serializer = PasswordChangeSerializer(data=request.data, context={'request': request})
 			if serializer.is_valid():
 				serializer.change_password()
-				return Response(status=status.HTTP_200_OK)
+				return Response(
+					{"detail": "Password updated"},
+					status=status.HTTP_200_OK)
 			errors.update(serializer.errors)
 
 		elif action_type == 'change_email':
-			serializer = EmailValidationSerializer(data=request.data, context={'request': request})
-			if serializer.is_valid():
-				serializer.create()
-				return Response(status=status.HTTP_200_OK)
+			# serializer = EmailValidationSerializer(data=request.data, context={'request': request})
+			# if serializer.is_valid():
+			# 	serializer.create()
+			email = request.data.get("email")
+			if email:
+				user = request.auth.user
+				user.email = email
+				user.save()
+				return Response(
+					{"email": email},
+					status=status.HTTP_200_OK)
 			errors.update(serializer.errors)
 
 		elif action_type == 'change_name':
-			serializer = UserProfileSerializer(data=request.data, context={'request': request})
-			if serializer.is_valid(raise_exception = True):
-				serializer.save()
+			display_name = request.data.get("display_name")
+			print("user is", request.auth.user)
+			if display_name:
+				organizer = EventOrganizer.objects.get(user = request.auth.user)
+				organizer.display_name = display_name
+				organizer.save()
 				return Response(
-					{'email': request.auth.user.email,
-					'first_name': request.auth.user.first_name,
-					'last_name': request.auth.user.last_name,
-					'phone_number': request.auth.user.profile.phone_number},
+					{
+					'display_name': display_name,
+					},
 					status=status.HTTP_200_OK)
 			print('errors are ', serializer.errors)
 			errors.update(serializer.errors)
@@ -120,20 +131,7 @@ class UserDetailView(APIView):
 			if EmailAddress.objects.filter(email=email, user=request.auth.user).exists():
 				email_ver = EmailAddress.objects.get(email=email, user=request.auth.user)
 				email_ver.send_code()
-				return Response(status = status.HTTP_200_OK)
 
-		elif action_type == 'change_card':
-			card_id = int(request.data.get('card_id'))
-			card = PaymentCard.objects.get(id=card_id, user=request.auth.user)
-			card.default = True,
-			card.save()
-			return Response(status = status.HTTP_200_OK)
-
-		elif action_type == 'remove_card':
-			card_id = int(request.data.get('card_id'))
-			card = PaymentCard.objects.get(id=card_id, user=request.auth.user)
-			card.delete()
-			return Response(status = status.HTTP_200_OK)
 
 		return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
