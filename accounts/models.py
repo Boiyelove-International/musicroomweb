@@ -6,13 +6,16 @@ from model_utils.models import TimeStampedModel
 class EventOrganizer(TimeStampedModel):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	display_name = models.CharField(max_length=60)
+	profile_photo = models.ImageField(upload_to="profile_photo", null=True, blank=True)
 
 class Device(TimeStampedModel):
-	pass
+	device_id = models.CharField(max_length=256)
+	device_name = models.CharField(max_length=60)
 		
 class PartyGuest(TimeStampedModel):
 	user = models.OneToOneField(Device, on_delete=models.CASCADE)
 	display_name = display_name = models.CharField(max_length=60)
+	profile_photo = models.ImageField(upload_to="profile_photo", null=True, blank=True)
 
 
 

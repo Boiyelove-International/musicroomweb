@@ -14,10 +14,10 @@ class NotificationSerializer(serializers.ModelSerializer):
 		models = Notification
 		fields = "__all__"
 
-class SongSuggestion(serializers.ModelSerializer):
+class SongSuggestionSerializer(serializers.ModelSerializer):
 	class Meta:
 		models = SongSuggestion
 		fields = "__all__"
 
-class Search(serializers.Serializer):
+class SearchSerializer(serializers.Serializer):
 	term =  serializers.CharField(max_length = 60)

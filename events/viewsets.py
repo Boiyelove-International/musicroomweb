@@ -1,6 +1,10 @@
-from rest_framework.generics import  ListAPIView
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.generics import  ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from .serializers import EventSerializer, SongSuggestionSerializer, NotificationSerializer
-from .models import
+from .models import Event, SongSuggestion, Notification
 from .utils import search_music
 
 """
@@ -49,7 +53,7 @@ Storefront = IP to location to country code to lowercase
 # List all all - All events there are
 # List all notifications - ones I got from events and suggestions
 
-class SearchView(APIView):
+class SearchSongView(APIView):
 
 	def get(self, request):
 		term = request.GET.get('term', None)
@@ -66,23 +70,42 @@ class SearchView(APIView):
 			status = status.HTTP_200_OK
 			)	
 
-class EventCreateList(ListCreateAPIView):
-	serializer_class = EventSerializer
-	queryset = EventSerializer.objects.all()
 
-class EventDetail(RetrieveUpdateDestroyAPIView):
+class JoinEventView(APIView):
+	def get(self, request):
+		return Response(
+			{},
+			status = status.HTTP_200_OK
+			)
+
+	def post(self, request):
+		return Response(
+			{},
+			status = status.HTTP_200_OK
+			)
+
+
+class EventCreateView(ListCreateAPIView):
+	permission_class = [IsAuthenticated]
 	serializer_class = EventSerializer
-	queryset = EventSerializer.objects.all()
+	queryset = Event.objects.all()
+
+class EventDetailView(RetrieveUpdateDestroyAPIView):
+	permission_class = [IsAuthenticated]
+	serializer_class = EventSerializer
+	queryset = Event.objects.all()
+
+
 
 
 class SuggestionsList(ListAPIView):
 	serializer_class = SongSuggestionSerializer
-	queryset = SongSuggestionSerializer.objects.all()
+	queryset = SongSuggestion.objects.all()
 
 
 class SuggestionUpdate(RetrieveUpdateDestroyAPIView):
 	serializer_class = SongSuggestionSerializer
-	queryset = SongSuggestionSerializer.objects.all()	
+	queryset = SongSuggestion.objects.all()	
 
 
 class NotificationListView(ListAPIView):

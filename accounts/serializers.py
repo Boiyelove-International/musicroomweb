@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
-from .models import EventOrganizer, EmailAddress, PasswordResetRequest
+from .models import EventOrganizer, EmailAddress, PasswordResetRequest, Device, PartyGuest
 
 
 
@@ -128,5 +128,21 @@ class ForgotPasswordSerializer(serializers.Serializer):
 
 	def create(self):
 		PasswordResetRequest.objects.create(user=self.get_user())
+
+
+class PartyGuestRegistration(serializers.Serializer):
+	device_id = serializers.CharField(max_length=100)
+	device_name = serializers.CharField(max_length=100)
+	display_name = serializers.CharField(max_length=60)
+
+	def create(self):
+		device, created = Device.objects.get_or_create(
+			device_id = self.validated_data["device_id"],
+		device_name =self.validated_data["device_name"]
+			)
+		PartyGuest.objects.get_or_create(
+			user = device,
+			display_name = self.validated_data["device_name"])
+		
 
 

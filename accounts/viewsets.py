@@ -4,11 +4,11 @@ from rest_framework.views import APIView, Response
 from accounts.models import EventOrganizer, EmailAddress
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from .serializers import UserSerializer, PasswordChangeSerializer
+from .serializers import UserSerializer, PasswordChangeSerializer, PartyGuestRegistration
 
 
 
-class UserRecordView(APIView):
+class OrganizerRegistrationView(APIView):
 
 	#remeber to change this
 	# permission_classes = [IsAdminUser]
@@ -38,6 +38,19 @@ class UserRecordView(APIView):
 			status= status.HTTP_400_BAD_REQUEST
 			)
 
+
+class GuestRegistrationView(APIView):
+	def post(self, request):
+		file = request.data.get("file", None)
+		profile_photo = request.data.get("profile_photo", None)
+		print("request.data file", request.data.get("file", None))
+		serializer = PartyGuestRegistration(data=request.data)
+		serializer.is_valid(raise_exception = True)
+		serializer.create()
+		return Response(
+					serializer.validated_data,
+					status = status.HTTP_201_CREATED
+					)		
 
 class CustomAuthToken(ObtainAuthToken):
 
