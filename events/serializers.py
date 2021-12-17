@@ -4,17 +4,20 @@ from rest_framework.validators import UniqueTogetherValidator
 from .models import Event, SongSuggestion, Notification
 
 
-class EventSerializer(models.ModelSerializer):
+class EventSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Event
 		fields = "__all__"
 
-class NotificationSerializer(models.ModelSerializer):
+class NotificationSerializer(serializers.ModelSerializer):
 	class Meta:
 		models = Notification
 		fields = "__all__"
 
-class SongSuggestion(models.ModelSerializer):
+class SongSuggestion(serializers.ModelSerializer):
 	class Meta:
 		models = SongSuggestion
 		fields = "__all__"
+
+class Search(serializers.Serializer):
+	term =  serializers.CharField(max_length = 60)

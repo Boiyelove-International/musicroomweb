@@ -32,8 +32,18 @@ class SongSuggestion(TimeStampedModel):
 	artist_name = models.CharField(max_length = 120)
 	album_art = models.URLField()
 	status = models.BooleanField(null=True)
-	stream_link = models.URLField(null=True)
+	song_url = models.URLField(null=True)
 
+
+"""
+{
+    'track_name': 'Marshmello Live at Lollapalooza 2021 ...', 
+    'datePublished': '2021-08-04', 
+    'track_Id': '8eXFvzMEldk', 
+    'track_url': 'https://music.youtube.com/watch?v=8eXFvzMEldk', 
+    'track_image': 'https://i.ytimg.com/vi/8eXFvzMEldk/hqdef...'
+}
+"""
 
 class Song(TimeStampedModel):
 	pass
