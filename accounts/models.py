@@ -15,11 +15,6 @@ class PartyGuest(TimeStampedModel):
 	display_name = display_name = models.CharField(max_length=60)
 
 
-class Notifications(TimeStampedModel):
-	content = models.CharField(max_length = 120)
-	organizer = models.ForeignKey(PartyGuest, on_delete=models.CASCADE, null=True )
-	guest = models.ForeignKey(EventOrganizer, on_delete=models.CASCADE, null=True)
-
 
 VALIDATION_TYPE = (('activation', 'activation'),
 	('password_reset', 'password_reset'))
