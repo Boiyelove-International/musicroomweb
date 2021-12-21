@@ -1,3 +1,5 @@
+import pprint
+import random, string
 import applemusicpy
 
 secret_key = """-----BEGIN PRIVATE KEY-----
@@ -13,18 +15,23 @@ team_id = 'Z6J284Z375'
 am = applemusicpy.AppleMusic(secret_key=secret_key, key_id=key_id, team_id=team_id)
 
 def search_music(title):
-	results = am.search(title, types=['songs'], limit=25)
+	results = am.search(title, storefront="ng", types=['songs',], limit=25)
+	pprint.pprint(results)
 	result_list = []
-	for item in results['results']['songs']['data']:
-		attributes = item['attributes']
-		artwork = attributes["artwork"]["url"].replace("{w}", "300").replace("{h}", "300")
-		data = dict(title = attributes["name"],
-			artist= attributes["artistName"],
-			preview = attributes["previews"][0]["url"],
-			album_art = artwork)
-		result_list.append(data)
+	if results['results']:
+		for item in results['results']['songs']['data']:
+			attributes = item['attributes']
+			artwork = attributes["artwork"]["url"].replace("{w}", "300").replace("{h}", "300")
+			data = dict(title = attributes["name"],
+				artist= attributes["artistName"],
+				preview = attributes["previews"][0]["url"],
+				album_art = artwork)
+			result_list.append(data)
 	return result_list[1:]
 
+
+def gen_code(k=4):
+	return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(k))
 
 
 # 	{

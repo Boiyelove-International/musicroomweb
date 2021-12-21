@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.conf import settings
 from model_utils.models import TimeStampedModel
@@ -32,11 +33,11 @@ class Event(TimeStampedModel):
 	event_time = models.TimeField()
 	event_date = models.DateField()
 	image = models.ImageField(upload_to="event_images")
+	code = models.CharField(max_length=4, editable=False, default="ABCD")
 	organizer = models.ForeignKey(
 		User, on_delete = models.CASCADE
 		)
-	attendees = models.ManyToManyField(PartyGuest
-		)
+	attendees = models.ManyToManyField(PartyGuest)
 	suggestions = models.ManyToManyField(SongSuggestion)
 
 class Notification(TimeStampedModel):

@@ -10,7 +10,7 @@ class EventOrganizer(TimeStampedModel):
 
 class Device(TimeStampedModel):
 	device_id = models.CharField(max_length=256)
-	device_name = models.CharField(max_length=60)
+	device_name = models.CharField(max_length=60, null=True, blank=True)
 		
 class PartyGuest(TimeStampedModel):
 	user = models.OneToOneField(Device, on_delete=models.CASCADE)

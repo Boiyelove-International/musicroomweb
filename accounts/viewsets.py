@@ -2,7 +2,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView, Response
 from accounts.models import EventOrganizer, EmailAddress
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from .serializers import UserSerializer, PasswordChangeSerializer, PartyGuestRegistration
 
@@ -40,6 +40,8 @@ class OrganizerRegistrationView(APIView):
 
 
 class GuestRegistrationView(APIView):
+	# permission_classes = [AllowAny]
+
 	def post(self, request):
 		file = request.data.get("file", None)
 		profile_photo = request.data.get("profile_photo", None)
@@ -50,7 +52,29 @@ class GuestRegistrationView(APIView):
 		return Response(
 					serializer.validated_data,
 					status = status.HTTP_201_CREATED
-					)		
+					)	
+
+class PartyGuestProfile(APIView):
+	def post(self, request):
+		display_name = request.data.get("display_name", None)
+		guest_id = request.META.get("HTTP_GUEST")
+		if guest_id and display_name:
+			device = Device.objects.filter(
+				device_id = guest_id
+				).first()
+			if device:
+				pg = PartyGuest.objects.filter(user = device).first()
+				pg.display_name = display_name
+				pg.dave()
+				return Response(
+					{"dusplay_name": display_name},
+					status = status.HTTP_200_OK
+					)
+		return Response(
+					{"detail": "Provide display name"},
+					status = status.HTTP_400_BAD_REQUEST
+					)	
+
 
 class CustomAuthToken(ObtainAuthToken):
 

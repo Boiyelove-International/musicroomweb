@@ -132,17 +132,24 @@ class ForgotPasswordSerializer(serializers.Serializer):
 
 class PartyGuestRegistration(serializers.Serializer):
 	device_id = serializers.CharField(max_length=100)
-	device_name = serializers.CharField(max_length=100)
 	display_name = serializers.CharField(max_length=60)
 
 	def create(self):
 		device, created = Device.objects.get_or_create(
 			device_id = self.validated_data["device_id"],
-		device_name =self.validated_data["device_name"]
+		# device_name =self.validated_data["device_name"]
 			)
-		PartyGuest.objects.get_or_create(
+		try:
+			pg = PartyGuest.objects.get(
 			user = device,
-			display_name = self.validated_data["device_name"])
+			)
+			pg.display_name = self.validated_data["display_name"]
+			pg.save()
+		except PartyGuest.DoesNotExist:
+			PartyGuest.objects.create(
+			user = device,
+			display_name = self.validated_data["display_name"])
+
 		
 
 
