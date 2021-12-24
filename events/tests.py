@@ -61,6 +61,10 @@ class EventTests(APITestCase):
 		self.assertEqual(Event.objects.count(), 1)
 
 
+		# test update event
+		url_2= reverse('events:events-detail-update-delete', kwargs={"pk":response_data["id"]})
+		response = self.client.get(url_2, data, format='json')
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 		# test update event
