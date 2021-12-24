@@ -6,7 +6,6 @@ from .utils import gen_code
 
 @receiver(pre_save, sender=Event)
 def add_code(sender, instance, **kwargs):
-	print("instance is", instance, instance.code)
 	if not instance.code or instance.code=="ABCD":
 		find_code = True
 		while find_code:

@@ -69,12 +69,10 @@ class EventTests(APITestCase):
 
 		# test update event
 		url_2= reverse('events:events-detail-update-delete', kwargs={"pk":response_data["id"]})
-		print("data is", data, type(data))
 		data["name"]='House Party 2 Edited'
 		file1 = open("media/test_files/" + "test_image.jpeg", 'rb')
 		data["image"] = file1
 		response = self.client.patch(url_2, data, format='multipart')
-		print(response.json())
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(Event.objects.count(), 1)
 
@@ -85,3 +83,48 @@ class EventTests(APITestCase):
 		response = self.client.delete(url_2, data, format='json')
 		self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 		self.assertEqual(Event.objects.count(), 0)
+
+
+	def test_search_song(self):
+		url = reverse('events:search') + "?term=Davido Fia"
+		response = self.client.get(url, format="json")
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_suggest_song(self):
+		pass
+
+	def test_accept_suggestion(self):
+		pass
+
+	def test_deny_suggestion(self):
+		pass
+
+	def test_remove_suggestion(self):
+		pass
+
+
+class PartyGuestEventTests(APITestCase):
+	def setUp(self):
+		self.event = None
+		self.pg = PartyGuestFactory()
+		self.eo = EventOrganizerFactory()
+
+	def test_join_an_event(self):
+		url = reverse("events:join-event")
+		'event/join/'
+		pass
+
+	def test_view_event(self):
+		pass
+
+	def test_suggest_song(self):
+		pass
+
+	def test_accept_suggestion(self):
+		pass
+
+	def test_deny_suggestion(self):
+		pass
+
+	def test_remove_suggestion(self):
+		pass

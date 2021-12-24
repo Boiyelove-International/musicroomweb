@@ -15,6 +15,7 @@ class Song(TimeStampedModel):
 	song_url = models.URLField(null=True)
 	play_count = models.PositiveIntegerField(default=0)
 	apple_song_id = models.CharField(max_length=30, unique=True)
+	suggestion_count = models.PositiveIntegerField(default=0)
 
 	def __str__(self):
 		return "%s - %s" % (self.song_title, self.artist_name)
@@ -35,8 +36,7 @@ class SongSuggestion(TimeStampedModel):
 	event = models.ForeignKey(Event, on_delete=models.CASCADE)
 	song = models.ForeignKey(Song, on_delete=models.CASCADE)
 	is_playing = models.BooleanField(null=True) #Null  not played, playing = true, played = false
-
-
+	suggested_by = models.ForeignKey(PartyGuest, on_delete=models.CASCADE)
 
 
 class Playlist(TimeStampedModel):

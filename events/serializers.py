@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from accounts.models import EventOrganizer
-from .models import Event, SongSuggestion, Notification
+from .models import Event, SongSuggestion, Notification, Song
 
 
 class EventSerializerForm(serializers.ModelSerializer):
@@ -43,12 +43,17 @@ class EventSerializer(serializers.ModelSerializer):
 
 class NotificationSerializer(serializers.ModelSerializer):
 	class Meta:
-		models = Notification
+		model = Notification
 		fields = "__all__"
 
 class SongSuggestionSerializer(serializers.ModelSerializer):
 	class Meta:
-		models = SongSuggestion
+		model = SongSuggestion
+		fields = "__all__"
+
+class SongSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Song
 		fields = "__all__"
 
 class SearchSerializer(serializers.Serializer):

@@ -1,6 +1,7 @@
 import pprint
 import random, string
 import applemusicpy
+from .serializers import SongSerializer
 from .models import Song
 
 secret_key = """-----BEGIN PRIVATE KEY-----
@@ -41,15 +42,18 @@ def search_music(title):
 	result_list = []
 	if results['results']:
 		songs = results["results"]["songs"]["data"]
+
 		songs_id = [x["id"] for x in songs]
 		existing_songs = Song.objects.filter(apple_song_id__in=songs_id)
 		if existing_songs.exists():
 			songs_id = list(set(existing_songs.values_list("apple_song_id", flat=True)))
 			# print("existing songs id are", songs_id)
 		# Todo: Re-evaluate the following line to filter exting songs
+		result_list = [clean_song_data(song_dict) for song_dict in songs]
 		songs = [Song(**clean_song_data(song_dict)) for song_dict in songs]
+		
 		# print("songs is", songs)
-		result_list = Song.objects.bulk_create(songs, ignore_conflicts=True)
+		Song.objects.bulk_create(songs, ignore_conflicts=True)
 		# print("songs created are", len(result_list))
 
 		# for item in results['results']['songs']['data']:
