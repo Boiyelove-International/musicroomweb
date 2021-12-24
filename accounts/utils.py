@@ -1,7 +1,5 @@
 import random
 import string
-from .models import Profile
-from django.core.mail import EmailMultiAlternatives
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 from django.template import Context
@@ -23,3 +21,9 @@ def send_cute_mail(template, subject, data, from_email, to):
 	msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
 	msg.attach_alternative(html_content, "text/html")
 	msg.send()
+
+# def getGuestFromID(id):
+# 	device = Device.objects.filter(
+# 					device_id = id
+# 					).first()
+

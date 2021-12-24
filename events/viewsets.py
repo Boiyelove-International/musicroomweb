@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import  ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from django.contrib.auth.models import User
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser
+from rest_framework.parsers import JSONParser, MultiPartParser, FileUploadParser, FormParser
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from .serializers import EventSerializer, SongSuggestionSerializer, NotificationSerializer,  EventSerializerForm
 from accounts.models import Device, PartyGuest
@@ -59,6 +59,7 @@ Storefront = IP to location to country code to lowercase
 # List all all - All events there are
 # List all notifications - ones I got from events and suggestions
 
+
 class SearchSongView(APIView):
 
 	def get(self, request):
@@ -98,17 +99,53 @@ class JoinEventView(APIView):
 				)
 
 	def post(self, request):
-		return Response(
-			{},
-			status = status.HTTP_200_OK
-			)
+		guest_id = request.META.get("HTTP_GUEST")
+		if guest_id:
+			device = Device.objects.filter(
+				device_id = guest_id
+				).first()
+			# Get the device
+			if device:
+				# Get he user
+				pg = PartyGuest.objects.filter(user = device).first()
+				code =request.data.get("event_code", None)
+				# Get the event
+				event = Event.objects.filter(
+					code = code).first()
+				if event:
+					# add as attendee
+					s = event.attendees.add(pg)
+					return Response(
+						{"joined": True},
+						status = status.HTTP_200_OK
+						)
+			else:
+				return 	Response(
+				{
+				"error": "User not found",
+				"joined": False,
+				},
+				status = status.HTTP_400_BAD_REQUEST
+					)
+		return 	Response(
+				{
+				"error": "Event not found",
+				"joined": False,
+				},
+				status = status.HTTP_404_NOT_FOUND
+				)
 
 
-class EventCreateView(APIView):
-	permission_class = [IsAuthenticated]
-	serializer_class = EventSerializer
+class EventCreateView(ListCreateAPIView):
+	permission_classes = [IsAuthenticated]
+	serializer_class = EventSerializerForm
 	queryset = Event.objects.all()
+	parser_classes = [JSONParser, MultiPartParser, FileUploadParser]
 
+	def get_serializer_class(self):
+		if self.request.method == "GET":
+			return EventSerializer
+		return self.serializer_class
 
 	def get(self, request):
 		qs = Event.objects.all()
@@ -134,39 +171,44 @@ class EventCreateView(APIView):
 			status = status.HTTP_200_OK
 			)	
 
-	def post(self, request):
-		errors = {}
-		image = request.data.pop("image", None)
-		data = request.data
-		serializer = EventSerializerForm(data=data)
-		if serializer.is_valid(raise_exception=True):
-			if image:
-				decoded_file = ContentFile(base64.decodebytes(bytes(image['file'], 'utf-8')), name=image['filename'])
-				data.update(image=image)
-				event = Event(
-					name = data["name"],
-					about = data["about"],
-					event_time = data["event_time"],
-					event_date= data["event_date"],)
-				event.organizer = request.auth.user
-				event.image.save(name=image["filename"], content=decoded_file)
-				# u = User.objects.get(username = request.auth.user)
-				# event.organizer = user
-				event = event.save()
-				serializer = EventSerializer(event)
-				return Response(
-				serializer.data,
-				status = status.HTTP_201_CREATED
-				)
-			else:
-				errors["image"] = "Please provide an image"
-		else:
-			errors.update(
-				serializer.errors)
-		return Response(
-			serializer.errors,
-			status = status.HTTP_400_BAD_REQUEST
-			)	
+	def perform_create(self, serializer):
+		serializer.save(organizer = self.request.auth.user)
+
+
+	# def post(self, request):
+	# 	errors = {}
+	# 	image = request.data.pop("image", None)
+	# 	data = request.data
+	# 	serializer = EventSerializerForm(data=data)
+	# 	if serializer.is_valid(raise_exception=True):
+	# 		if image:
+	# 			decoded_file = ContentFile(base64.decodebytes(bytes(image['file'], 'utf-8')), name=image['filename'])
+	# 			data.update(image=image)
+	# 			event = Event(
+	# 				name = data["name"],
+	# 				about = data["about"],
+	# 				event_time = data["event_time"],
+	# 				event_date= data["event_date"],)
+	# 			event.organizer = request.auth.user
+	# 			event.image.save(name=image["filename"], content=decoded_file)
+	# 			# u = User.objects.get(username = request.auth.user)
+	# 			# event.organizer = user
+	# 			event = event.save()
+	# 			serializer = EventSerializer(event)
+	# 			return Response(
+	# 			serializer.data,
+	# 			status = status.HTTP_201_CREATED
+	# 			)
+	# 		else:
+	# 			errors["image"] = "Please provide an image"
+	# 	else:
+	# 		errors.update(
+	# 			serializer.errors)
+	# 	return Response(
+	# 		serializer.errors,
+	# 		status = status.HTTP_400_BAD_REQUEST
+	# 		)	
+
 
 
 
@@ -175,13 +217,20 @@ class EventDetailView(RetrieveUpdateDestroyAPIView):
 	permission_class = [IsAuthenticated]
 	serializer_class = EventSerializer
 	queryset = Event.objects.all()
+	parser_classes = [JSONParser, MultiPartParser, FileUploadParser]
 
 
 
-
-class SuggestionsList(ListAPIView):
+class SuggestionListView(ListAPIView):
 	serializer_class = SongSuggestionSerializer
 	queryset = SongSuggestion.objects.all()
+
+	def get_queryset(self):
+		qt = self.request.GET.get("qt", None)
+		qs = super().get_queryset()
+		if qt:
+			pass
+		return qs
 
 
 class SuggestionUpdate(RetrieveUpdateDestroyAPIView):

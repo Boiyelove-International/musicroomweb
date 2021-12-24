@@ -1,18 +1,20 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
+from accounts.models import EventOrganizer
 from .models import Event, SongSuggestion, Notification
 
 
 class EventSerializerForm(serializers.ModelSerializer):
 	class Meta:
 		model = Event
-		fields = ["name", "about", "event_date", "event_time"]
+		fields = ["id","name", "about", "event_date", "event_time",]
 		
 
 class EventSerializer(serializers.ModelSerializer):
 	accepted_suggestions = serializers.SerializerMethodField('accepted_suggestions')
 	organizer_display_picture = serializers.SerializerMethodField('get_organizer_picture')
+	organizer = serializers.SerializerMethodField('get_organizer_display_name')
 
 	class Meta:
 		model = Event
@@ -29,9 +31,14 @@ class EventSerializer(serializers.ModelSerializer):
 	def get_organizer_picture(self, obj):
 		eo = EventOrganizer.objects.filter(
 			user = obj.organizer).first()
-		if eo:
-			return eo.display_picture
+		if eo and eo.profile_photo:
+			return eo.profile_photo.url
 		return None
+
+	def get_organizer_display_name(self, obj):
+		eo = EventOrganizer.objects.filter(
+			user = obj.organizer).first()
+		return eo.display_name
 
 
 class NotificationSerializer(serializers.ModelSerializer):

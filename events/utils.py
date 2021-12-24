@@ -1,6 +1,7 @@
 import pprint
 import random, string
 import applemusicpy
+from .models import Song
 
 secret_key = """-----BEGIN PRIVATE KEY-----
 MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgaCrtYljotBnnaeNT
@@ -14,20 +15,59 @@ team_id = 'Z6J284Z375'
 
 am = applemusicpy.AppleMusic(secret_key=secret_key, key_id=key_id, team_id=team_id)
 
+
+
+
+def clean_song_data(song):
+	attributes = song['attributes']
+	artwork = attributes["artwork"]["url"].replace("{w}", "300").replace("{h}", "300")
+	return dict(song_title = attributes["name"],
+						artist_name= attributes["artistName"],
+						song_url = attributes["previews"][0]["url"],
+						album_art = artwork,
+						apple_song_id =  "%s" % song["id"])
+
+def check_song_in_list(song_dict, list_item):
+		item = "{}".format(song_dict["id"])
+		if  item in list_item:
+			return True
+		return False
+
 def search_music(title):
-	results = am.search(title, storefront="ng", types=['songs',], limit=25)
-	pprint.pprint(results)
+	url = "https://api.music.apple.com/v1/catalog/us/search?term=%s&limit=25&types=songs" % title.replace(" ", "+")
+	results = am._get(url)
+	# results = am.search(title, storefront="ng", types=['songs',], limit=25)
+	# pprint.pprint(results)
 	result_list = []
 	if results['results']:
-		for item in results['results']['songs']['data']:
-			attributes = item['attributes']
-			artwork = attributes["artwork"]["url"].replace("{w}", "300").replace("{h}", "300")
-			data = dict(title = attributes["name"],
-				artist= attributes["artistName"],
-				preview = attributes["previews"][0]["url"],
-				album_art = artwork)
-			result_list.append(data)
-	return result_list[1:]
+		songs = results["results"]["songs"]["data"]
+		songs_id = [x["id"] for x in songs]
+		existing_songs = Song.objects.filter(apple_song_id__in=songs_id)
+		if existing_songs.exists():
+			songs_id = list(set(existing_songs.values_list("apple_song_id", flat=True)))
+			# print("existing songs id are", songs_id)
+		# Todo: Re-evaluate the following line to filter exting songs
+		songs = [Song(**clean_song_data(song_dict)) for song_dict in songs]
+		# print("songs is", songs)
+		result_list = Song.objects.bulk_create(songs, ignore_conflicts=True)
+		# print("songs created are", len(result_list))
+
+		# for item in results['results']['songs']['data']:
+			
+			# attributes = item['attributes']
+			# artwork = attributes["artwork"]["url"].replace("{w}", "300").replace("{h}", "300")
+			# data = dict(title = attributes["name"],
+			# 	artist= attributes["artistName"],
+			# 	preview = attributes["previews"][0]["url"],
+			# 	album_art = artwork,
+			# 	apple_song_id =  item["id"])
+			# result_list.append(clean_song_data(data))
+	return result_list
+
+
+	
+
+
 
 
 def gen_code(k=4):

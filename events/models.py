@@ -8,24 +8,16 @@ User = settings.AUTH_USER_MODEL
 
 
 # Create your models here.
-class SongSuggestion(TimeStampedModel):
-	song_title = models.CharField(max_length=120)
-	artist_name = models.CharField(max_length = 120)
-	album_art = models.URLField()
-	status = models.BooleanField(null=True)
-	song_url = models.URLField(null=True)
-	is_playing = models.BooleanField(null=True) #Null  not played, playing = true, played = false
-
-
 class Song(TimeStampedModel):
 	song_title = models.CharField(max_length=120)
 	artist_name = models.CharField(max_length = 120)
 	album_art = models.URLField()
-	status = models.BooleanField(null=True)
 	song_url = models.URLField(null=True)
+	play_count = models.PositiveIntegerField(default=0)
+	apple_song_id = models.CharField(max_length=30, unique=True)
 
-class Playlist(TimeStampedModel):
-	pass
+	def __str__(self):
+		return "%s - %s" % (self.song_title, self.artist_name)
 
 class Event(TimeStampedModel):
 	name = models.CharField(max_length=120)
@@ -35,10 +27,23 @@ class Event(TimeStampedModel):
 	image = models.ImageField(upload_to="event_images")
 	code = models.CharField(max_length=4, editable=False, default="ABCD")
 	organizer = models.ForeignKey(
-		User, on_delete = models.CASCADE
+		User, on_delete = models.CASCADE, editable=False
 		)
-	attendees = models.ManyToManyField(PartyGuest)
-	suggestions = models.ManyToManyField(SongSuggestion)
+	attendees = models.ManyToManyField(PartyGuest, null=True)
+
+class SongSuggestion(TimeStampedModel):
+	event = models.ForeignKey(Event, on_delete=models.CASCADE)
+	song = models.ForeignKey(Song, on_delete=models.CASCADE)
+	is_playing = models.BooleanField(null=True) #Null  not played, playing = true, played = false
+
+
+
+
+class Playlist(TimeStampedModel):
+	pass
+
+
+
 
 class Notification(TimeStampedModel):
 	event = models.ForeignKey(Event, on_delete=models.SET_NULL, null=True)

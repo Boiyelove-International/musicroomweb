@@ -18,7 +18,7 @@ def setLowercaseValues(sender, instance, *args, **kwargs):
 	instance.username = instance.email
 
 @receiver(post_save, sender=User)
-def create_profile(sender, instance, created, *args, **kwargs):
+def create_token(sender, instance, created, *args, **kwargs):
 	if created:
 		Token.objects.create(user=instance)
 
