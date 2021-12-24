@@ -124,25 +124,28 @@ class EventTests(APITestCase):
 
 
 class PartyGuestEventTests(APITestCase):
-	def setUp(self):
-		self.event = EventFactory()
-		self.pg = PartyGuestFactory()
-		self.headers = {"HTTP_GUEST": self.pg.user.device_id}
-		self.assertTrue(type(self.event) is Event)
 
 	def test_join_an_event(self):
+		pg = PartyGuestFactory()
+		headers = {"HTTP_GUEST": pg.user.device_id}
 		url = reverse("events:join-event")
-		response = self.client.get(url + "?q=%s" % self.event.code, headers=self.headers, format="json")
+		event = EventFactory()
+		self.assertTrue(type(event) is Event)
+		response = self.client.get(url + "?q=%s" % event.code, headers=headers, format="json")
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		response = self.client.post(url, headers=self.headers,  data={"event_code": self.event.code}, format="json")
+
+		#Todo: Add header authentication for guests
+		
+		response = self.client.post(url, headers=headers,  data={"event_code": event.code}, format="json")
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertTrue(pg in event.attendees.all())
 		#Todo: check if partyguest is a part of event_attendees
 
 
-# 	def test_view_event(self):
-# 		url = reverse("events:events-suggestions", kwargs={"pk": self.event.id})
-# 		response = self.client.get(url, headers=self.headers,)
-# 		self.assertEqual(response.status_code, status.HTTP_200_OK)
+	# def test_view_event(self):
+	# 	url = reverse("events:events-suggestions", kwargs={"pk": self.event.id})
+	# 	response = self.client.get(url, headers=self.headers,)
+	# 	self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 # 	def test_suggest_song(self):

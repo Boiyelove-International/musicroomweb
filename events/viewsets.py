@@ -1,4 +1,5 @@
 import base64
+import pprint
 from django.core.files.base import ContentFile
 from rest_framework import status
 from rest_framework.views import APIView
@@ -99,7 +100,9 @@ class JoinEventView(APIView):
 				)
 
 	def post(self, request):
-		guest_id = request.META.get("HTTP_GUEST")
+		headers = request.META.get("headers", None)
+		guest_id = request.META.get("HTTP_GUEST") or headers.get("HTTP_GUEST")
+		# pprint.pprint(request.META)
 		if guest_id:
 			device = Device.objects.filter(
 				device_id = guest_id
@@ -119,21 +122,22 @@ class JoinEventView(APIView):
 						{"joined": True},
 						status = status.HTTP_200_OK
 						)
-			else:
-				return 	Response(
-				{
-				"error": "User not found",
-				"joined": False,
-				},
-				status = status.HTTP_400_BAD_REQUEST
-					)
+				else:
+					return 	Response(
+								{
+								"error": "Event not found",
+								"joined": False,
+								},
+								status = status.HTTP_404_NOT_FOUND
+								)
 		return 	Response(
-				{
-				"error": "Event not found",
-				"joined": False,
-				},
-				status = status.HTTP_404_NOT_FOUND
-				)
+		{
+		"error": "Guest not found",
+		"joined": False,
+		},
+		status = status.HTTP_400_BAD_REQUEST
+			)
+
 
 
 class EventCreateView(ListCreateAPIView):
