@@ -142,10 +142,10 @@ class PartyGuestEventTests(APITestCase):
 		#Todo: check if partyguest is a part of event_attendees
 
 
-	# def test_view_event(self):
-	# 	url = reverse("events:events-suggestions", kwargs={"pk": self.event.id})
-	# 	response = self.client.get(url, headers=self.headers,)
-	# 	self.assertEqual(response.status_code, status.HTTP_200_OK)
+	def test_view_event(self):
+		url = reverse("events:events-suggestions", kwargs={"pk": self.event.id})
+		response = self.client.get(url, headers=self.headers,)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 # 	def test_suggest_song(self):
