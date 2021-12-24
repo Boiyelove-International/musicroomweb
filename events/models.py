@@ -29,7 +29,7 @@ class Event(TimeStampedModel):
 	organizer = models.ForeignKey(
 		User, on_delete = models.CASCADE, editable=False
 		)
-	attendees = models.ManyToManyField(PartyGuest, null=True)
+	attendees = models.ManyToManyField(PartyGuest, editable=False)
 
 class SongSuggestion(TimeStampedModel):
 	event = models.ForeignKey(Event, on_delete=models.CASCADE)

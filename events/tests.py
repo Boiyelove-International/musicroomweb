@@ -23,7 +23,7 @@ from .utils import search_music
 
 def generate_image():
 	image = Image.new("RGB", (300,300))
-	tmp_file = tempfile.NamedTemporaryFile(suffix=".jpg")
+	tmp_file = tempfile.NamedTemporaryFile(suffix=".png")
 	image.save(tmp_file)
 	return tmp_file.seek(0)
 
@@ -40,9 +40,7 @@ class EventTests(APITestCase):
 		eo = EventOrganizerFactory()
 		pg = PartyGuestFactory()
 		token = Token.objects.get(user=eo.user)
-		file1 = open("media/test_files/" + "test_image.jpeg", 'rb')
-		file1_read = file1.read()
-		file_encode = base64.encodebytes((file1_read))
+
 
 
 		tmp_file = generate_image()
@@ -65,17 +63,16 @@ class EventTests(APITestCase):
 
 
 
-		# test without search_tag or document
-
-
-
 		# test update event
-		url = reverse('events:events-detail-update-delete', kwargs={"pk":response_data["id"]})
+		url_2= reverse('events:events-detail-update-delete', kwargs={"pk":response_data["id"]})
 		print("data is", data, type(data))
 		data["name"]='House Party 2 Edited'
-		data["image"] = generate_image()
-		response = self.client.patch(url, data, format='multipart')
+		file1 = open("media/test_files/" + "test_image.jpeg", 'rb')
+		data["image"] = file1
+		response = self.client.patch(url_2, data, format='multipart')
 		print(response.json())
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(Event.objects.count(), 1)
+
+
 
