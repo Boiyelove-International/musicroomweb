@@ -75,4 +75,9 @@ class EventTests(APITestCase):
 		self.assertEqual(Event.objects.count(), 1)
 
 
-
+		#test delete event
+		url_2= reverse('events:events-detail-update-delete', kwargs={"pk":response_data["id"]})
+		data["image"] = file1
+		response = self.client.delete(url_2, data, format='json')
+		self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+		self.assertEqual(Event.objects.count(), 0)
