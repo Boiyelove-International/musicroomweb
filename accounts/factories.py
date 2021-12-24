@@ -9,7 +9,6 @@ User = get_user_model()
 
 class UserFactory(DjangoModelFactory):
 	first_name = factory.Faker('first_name')
-	last_name = factory.Faker('last_name')
 	email = factory.LazyAttributeSequence(lambda o, n: '%s_%s@boiyelove.website' % (o.first_name, n))
 	username = factory.LazyAttributeSequence(lambda o, n: '%s_%s' % (o.first_name, n))
 	password = factory.PostGenerationMethodCall('set_password', 'somePasswordHere')
@@ -18,13 +17,13 @@ class UserFactory(DjangoModelFactory):
 		model = User
 
 
-class EventOrganizerFactory(DjangoModelFactory):
-	user = factory.SubFactory(UserFactory)
-	display_name = factory.LazyAttributeSequence(lambda o, n: '%s_%s' % (o.user.first_name, n))
-	# profile_photo = models.ImageField(upload_to="profile_photo", null=True, blank=True)
+# class EventOrganizerFactory(DjangoModelFactory):
+# 	user = factory.SubFactory(UserFactory)
+# 	display_name = factory.LazyAttributeSequence(lambda o, n: '%s_%s' % (o.user.first_name, n))
+# 	# profile_photo = models.ImageField(upload_to="profile_photo", null=True, blank=True)
 
-	class Meta:
-		model = EventOrganizer
+# 	class Meta:
+# 		model = EventOrganizer
 
 class DeviceFactory(DjangoModelFactory):
 	device_name = factory.Faker('word')

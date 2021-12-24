@@ -8,7 +8,7 @@ from rest_framework.test import APIRequestFactory, APITestCase
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from .models import EventOrganizer, EmailAddress, PartyGuest, Device
-from .factories import EventOrganizerFactory, PartyGuestFactory
+from .factories import PartyGuestFactory
 
 # Create your tests here.
 # factory = APIRequestFactory()
@@ -20,20 +20,20 @@ class AccountAPITestCase(APITestCase):
 	def test_api_create_account(self):
 		"""
 		Ensure we can create account
-		"""
-		eo = EventOrganizerFactory()
+		# """
+		# eo = EventOrganizerFactory()
 		pg = PartyGuestFactory()
 		url = reverse('accounts:register-organizer')
 		data = dict(display_name="Userperson", email="testuser@boiyelove.website", password="somenewpassword")
 		response = self.client.post(url, data, format='json')
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-		self.assertEqual(User.objects.count(), 2)
+		self.assertEqual(User.objects.count(), 1)
 		user = User.objects.get(email = "testuser@boiyelove.website")
 		self.assertEqual(user.email, "testuser@boiyelove.website")
 		self.assertEqual(user.check_password("somenewpassword"), True)
-		self.assertEqual(EventOrganizer.objects.count(), 2)
+		self.assertEqual(EventOrganizer.objects.count(), 1)
 		self.assertEqual(EventOrganizer.objects.get(user=user).display_name, "Userperson")
-		self.assertEqual(Token.objects.count(), 2)
+		self.assertEqual(Token.objects.count(), 1)
 
 		#test login
 		url = reverse('accounts:login-user')
@@ -61,5 +61,10 @@ class AccountAPITestCase(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(Device.objects.count(), 1)
 		self.assertEqual(PartyGuest.objects.count(), 1)
+
+		pg = PartyGuestFactory()
+		self.assertEqual(PartyGuest.objects.count(), 2)
+		self.assertTrue(type(pg) is PartyGuest)
+
 
 

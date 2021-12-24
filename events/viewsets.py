@@ -81,12 +81,12 @@ class SearchSongView(APIView):
 class JoinEventView(APIView):
 	def get(self, request):
 		q = request.GET.get("q", None)
-		print("q is ", q)
+		# print("q is ", q)
 		event = Event.objects.filter(
 			code = q).first()
 		if event:
 			s = EventSerializer(event)
-			print("s data is", s.data)
+			# print("s data is", s.data)
 			return Response(
 				s.data,
 				status = status.HTTP_200_OK

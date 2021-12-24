@@ -2,7 +2,7 @@ from django.dispatch import receiver
 from django.db.models.signals import pre_save, post_save
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
-from .models import EmailAddress, PasswordResetRequest
+from .models import EmailAddress, PasswordResetRequest, EventOrganizer
 
 
 
@@ -17,10 +17,13 @@ def setLowercaseValues(sender, instance, *args, **kwargs):
 	instance.email = instance.email.lower()
 	instance.username = instance.email
 
+
 @receiver(post_save, sender=User)
 def create_token(sender, instance, created, *args, **kwargs):
 	if created:
 		Token.objects.create(user=instance)
+		if not EventOrganizer.objects.filter(user=instance).exists():
+			EventOrganizer.objects.create(user=instance, display_name = instance.first_name)
 
 
 
