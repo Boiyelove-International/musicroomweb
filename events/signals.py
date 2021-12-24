@@ -4,13 +4,13 @@ from .models import Event
 from .utils import gen_code
 
 
-@receiver(sender=Event)
+@receiver(pre_save, sender=Event)
 def add_code(sender, instance, **kwargs):
-	if not instance.code:
+	print("instance is", instance, instance.code)
+	if not instance.code or instance.code=="ABCD":
 		find_code = True
 		while find_code:
 			code = gen_code()
 			if not Event.objects.filter(code = code).exists():
 				instance.code = code
-				instance.save()
 				find_code = False
