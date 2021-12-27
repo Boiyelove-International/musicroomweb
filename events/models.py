@@ -4,6 +4,7 @@ from django.conf import settings
 from model_utils.models import TimeStampedModel
 from accounts.models import PartyGuest, EventOrganizer
 
+
 User = settings.AUTH_USER_MODEL
 
 
@@ -20,6 +21,9 @@ class Song(TimeStampedModel):
 	def __str__(self):
 		return "%s - %s" % (self.song_title, self.artist_name)
 
+	def suggestion_count(self):
+		return SongSuggestion.objects.filter(song__apple_song_id = self.apple_song_id).count()
+
 class Event(TimeStampedModel):
 	name = models.CharField(max_length=120)
 	about = models.CharField(max_length = 320)
@@ -35,6 +39,7 @@ class Event(TimeStampedModel):
 class SongSuggestion(TimeStampedModel):
 	event = models.ForeignKey(Event, on_delete=models.CASCADE)
 	song = models.ForeignKey(Song, on_delete=models.CASCADE)
+	accepted = models.BooleanField(null=True)
 	is_playing = models.BooleanField(null=True) #Null  not played, playing = true, played = false
 	suggested_by = models.ForeignKey(PartyGuest, on_delete=models.CASCADE)
 

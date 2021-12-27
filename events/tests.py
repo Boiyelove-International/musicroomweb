@@ -13,7 +13,7 @@ from rest_framework import status
 from accounts.tests import AccountAPITestCase
 from accounts.factories import PartyGuestFactory, UserFactory
 from .factories import EventFactory
-from .models import Song, Event
+from .models import Song, Event, SongSuggestion
 from .utils import search_music
 
 # Create your tests here.
@@ -110,17 +110,57 @@ class EventTests(APITestCase):
 		response = self.client.get(url, format="json")
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-	# def test_accept_suggestion(self):
-	# 	url = reverse("events:events-suggestions", kwargs={"pk": self.event.id})
-	# 	data = {"accept": True, "suggestion_id": 123}
-	# 	response = self.client.post(url, data, format="json")
-	# 	self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-	# def test_deny_suggestion(self):
-	# 	url = reverse("events:events-suggestions", kwargs={"pk": self.event.id})
-	# 	data = {"accept": False, "suggestion_id": 123}
-	# 	response = self.client.post(url, data, format="json")
-	# 	self.assertEqual(response.status_code, status.HTTP_200_OK)
+	def test_accept_suggestion(self):
+		pg = PartyGuestFactory()
+		headers = {"HTTP_GUEST": pg.user.device_id}
+		event = EventFactory()
+
+		url = reverse('events:search') + "?term=Davido Fia"
+		response = self.client.get(url, headers=headers, format="json")
+		data_list = response.json()
+
+		data = {"apple_song_id": data_list[2]["apple_song_id"]}
+
+		url = reverse("events:events-suggestions", kwargs={"pk": event.id})
+		response = self.client.put(url, data, headers=headers, format="json")
+		ss = response.json()
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+
+		token = Token.objects.get(user=event.organizer)
+		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+		url = reverse("events:events-suggestions", kwargs={"pk": event.id})
+		data = {"accept_suggestion": True, "suggestion_id": ss["id"]}
+		response = self.client.patch(url, data, format="json")
+		print(response.json())
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+	def test_deny_suggestion(self):
+		pg = PartyGuestFactory()
+		headers = {"HTTP_GUEST": pg.user.device_id}
+		event = EventFactory()
+
+		url = reverse('events:search') + "?term=Davido Fia"
+		response = self.client.get(url, headers=headers, format="json")
+		data_list = response.json()
+
+		data = {"apple_song_id": data_list[2]["apple_song_id"]}
+
+		url = reverse("events:events-suggestions", kwargs={"pk": event.id})
+		response = self.client.put(url, data, headers=headers, format="json")
+		ss = response.json()
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+
+		token = Token.objects.get(user=event.organizer)
+		self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+		url = reverse("events:events-suggestions", kwargs={"pk": event.id})
+		data = {"accept_suggestion": False, "suggestion_id": ss["id"]}
+		response = self.client.patch(url, data, format="json")
+		print(response.json())
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class PartyGuestEventTests(APITestCase):
@@ -143,20 +183,48 @@ class PartyGuestEventTests(APITestCase):
 
 
 	def test_view_event(self):
-		url = reverse("events:events-suggestions", kwargs={"pk": self.event.id})
-		response = self.client.get(url, headers=self.headers,)
+		pg = PartyGuestFactory()
+		headers = {"HTTP_GUEST": pg.user.device_id}
+		event = EventFactory()
+		url = reverse("events:events-detail-update-delete", kwargs={"pk": event.id})
+		response = self.client.get(url, headers=headers,)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-# 	def test_suggest_song(self):
-# 		url = reverse("events:events-suggestions", kwargs={"pk": self.event.id})
-# 		data = {"song_id": 12345, "event_id": self.event.id}
-# 		response = self.client.post(url, data, headers=self.headers, format="json")
-# 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+	def test_search_song(self):
+		pg = PartyGuestFactory()
+		headers = {"HTTP_GUEST": pg.user.device_id}
+		url = reverse('events:search') + "?term=Davido Fia"
+		response = self.client.get(url, headers=headers, format="json")
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-# 	def test_remove_suggestion(self):
-# 		url = reverse("events:events-suggestions", kwargs={"pk": self.event.id})
-# 		data = {"suggestion_id": 123}
-# 		response = self.client.delete(url, data, headers=self.headers, format="json")
-# 		self.assertEqual(response.status_code, status.HTTP_200_OK)
+	def test_suggest_song_and_remove_song_suggestion(self):
+		pg = PartyGuestFactory()
+		headers = {"HTTP_GUEST": pg.user.device_id}
+		event = EventFactory()
+
+		url = reverse('events:search') + "?term=Davido Fia"
+		response = self.client.get(url, headers=headers, format="json")
+		data_list = response.json()
+
+		data = {"apple_song_id": data_list[0]["apple_song_id"]}
+
+		url = reverse("events:events-suggestions", kwargs={"pk": event.id})
+		response = self.client.put(url, data, headers=headers, format="json")
+		# print(response.json())
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+		self.assertEqual(SongSuggestion.objects.all().count(), 1)
+		self.assertEqual(SongSuggestion.objects.all().first().song.apple_song_id, data_list[0]["apple_song_id"])
+		#Todo must be attendee before suggesting
+
+
+
+		# test remove suggestion
+		url = reverse("events:events-suggestions", kwargs={"pk": event.id})
+		data = {"suggestion_id": SongSuggestion.objects.all().first().id}
+		response = self.client.delete(url, data, headers=headers, format="json")
+		# print(response.json())
+		self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+		#Todo: Test already suggested
+

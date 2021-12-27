@@ -3,4 +3,5 @@
 .env
 .mrenv/
 .amtest/
+.DS_Store
 # *.sqlite3

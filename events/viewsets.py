@@ -3,14 +3,16 @@ import pprint
 from django.core.files.base import ContentFile
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.mixins import DestroyModelMixin
 from rest_framework.generics import  ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser, MultiPartParser, FileUploadParser, FormParser
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
-from .serializers import EventSerializer, SongSuggestionSerializer, NotificationSerializer,  EventSerializerForm
+from .serializers import EventSerializer, SongSuggestionSerializer, NotificationSerializer,  EventSerializerForm, SongSuggestionSerializer
 from accounts.models import Device, PartyGuest
-from .models import Event, SongSuggestion, Notification
+from .models import Event, SongSuggestion, Notification, Song
 from .utils import search_music
 
 
@@ -59,6 +61,7 @@ Storefront = IP to location to country code to lowercase
 # List all my events (Events I created or events I joined)
 # List all all - All events there are
 # List all notifications - ones I got from events and suggestions
+
 
 
 class SearchSongView(APIView):
@@ -237,9 +240,116 @@ class SuggestionListView(ListAPIView):
 		return qs
 
 
-class SuggestionUpdate(RetrieveUpdateDestroyAPIView):
+
+class SuggestionUpdate(APIView):
 	serializer_class = SongSuggestionSerializer
-	queryset = SongSuggestion.objects.all()	
+	queryset = SongSuggestion.objects.all()
+	# http_method_names = ['put', 'patch', 'delete']
+	"""
+	Suggest song - Create - put
+	Accept - Reject -  Update -  patch
+	Remove suggestion - delete - delete
+	"""
+
+	def get_party_guest(self):
+		# Check user
+		headers = self.request.META.get("headers", None)
+		guest_id = self.request.META.get("HTTP_GUEST") or headers.get("HTTP_GUEST")
+		pg = None
+
+		if guest_id:
+			device = Device.objects.filter(
+				device_id = guest_id
+				).first()
+			if device:
+				pg = PartyGuest.objects.filter(user = device).first()
+				self.pg = pg
+		return pg
+
+		
+	
+	def put(self, request, *args, **kwargs):
+		"""
+		Suggest song - Create - put
+		"""
+
+		# Check user
+		if self.get_party_guest():
+			#Check event
+			event_id = kwargs.get("pk",None)
+			try:
+				apple_song_id = request.data.get("apple_song_id", None)
+				event = Event.objects.get(id= event_id)
+				song = Song.objects.filter(apple_song_id = apple_song_id).first()
+				ss = SongSuggestion.objects.create(
+						event = event,
+						song = song,
+						suggested_by = self.pg)
+				if ss:
+					ss = SongSuggestionSerializer(ss)
+					return Response(
+					ss.data,
+					status = status.HTTP_201_CREATED)
+			except ObjectDoesNotExist:
+				return Response(
+					{"detail": "Item not found"},
+					status = status.HTTP_404_NOT_FOUND)
+		return Response(
+				{"detail": "Guest Permission required"},
+				status = status.HTTP_400_BAD_REQUEST)
+
+
+	def patch(self, request, *args, **kwargs):
+		"""
+		Accept - Reject -  Update -  patch
+		"""
+		if request.user.is_authenticated:
+			# Check user
+			try:
+				#Check event
+				pk = kwargs.get("pk",None)
+				#Todo: Check if user is owner
+				spk = request.data.get("suggestion_id", None)
+				ss = SongSuggestion.objects.get(id = spk)
+				accepted = request.data.get("accept_suggestion", None)
+				if accepted != None:
+					ss.accepted = accepted
+					ss.save()
+					return Response(
+						{"detail": "Suggestion updated"},
+						status = status.HTTP_200_OK)
+			except ObjectDoesNotExist:
+				return Response(
+					{"detail": "Item not found"},
+					status = status.HTTP_404_NOT_FOUND)
+		return Response(
+				{"detail": "Permission required"},
+				status = status.HTTP_400_BAD_REQUEST)
+
+	def delete(self, request, *args, **kwargs):
+		"""
+		Remove suggestion - delete - delete
+		"""
+
+		# Check user
+		if self.get_party_guest():
+			#Check event
+			pk = kwargs.get("pk", None)
+			spk = request.data.get("suggestion_id", None)
+			ss=SongSuggestion.objects.filter(id = spk,
+						event = Event.objects.get(id = pk),
+						suggested_by = self.pg).first()
+			if ss:
+				ss.delete()
+				# if the resoonse is 204, don't proses the  json
+				return Response(
+					status = status.HTTP_204_NO_CONTENT)
+			return Response(
+				{"detail": "Item not found"},
+				status = status.HTTP_404_NOT_FOUND)
+		return Response(
+				{"detail": "Guest Permission required"},
+				status = status.HTTP_400_BAD_REQUEST)
 
 
 class NotificationListView(ListAPIView):
