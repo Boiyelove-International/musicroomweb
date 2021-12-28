@@ -1,5 +1,7 @@
 import base64
 import pprint
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from django.core.files.base import ContentFile
 from rest_framework import status
 from rest_framework.views import APIView
@@ -64,13 +66,38 @@ Storefront = IP to location to country code to lowercase
 
 
 
+
 class SearchSongView(APIView):
+	term = openapi.Parameter('term', in_=openapi.IN_QUERY, description='term',
+                               type=openapi.TYPE_STRING)
+	song_suggestion = openapi.Response('response description', SongSuggestionSerializer)   
+	@swagger_auto_schema(
+		manual_parameters=[term],
+		tags=["search"],
+		responses = {
+			'200' : openapi.Response(
+				description="Response 200",
+				examples = {
+				"application/json": [
+				{
+				"song_title": "Enyanda",
+				"artist_name": "Sheebah",
+				"song_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/83/19/a7/8319a765-282d-3b50-9a6b-a227823c9f6a/mzaf_1832824329428830054.plus.aac.p.m4a",
+				"album_art": "https://is4-ssl.mzstatic.com/image/thumb/Music114/v4/39/56/65/395665f4-a8ce-f4ab-94e4-a55bc061301c/859741319014_cover.jpg/300x300bb.jpg",
+				"apple_song_id": "1527408985"
+				}
+				]}),
+			'400': 'Bad Request'
+		},		
+		security=[],
+		operation_id='Search Songs',
+		operation_description='Search for song titles',
+	)
 
 	def get(self, request):
 		term = request.GET.get('term', None)
 		endpoint_data = {}
 		if not term:
-			
 			return Response(
 					endpoint_data,
 					status = status.HTTP_404_NOT_FOUND
@@ -83,6 +110,25 @@ class SearchSongView(APIView):
 
 
 class JoinEventView(APIView):
+	q = openapi.Parameter('q', in_=openapi.IN_QUERY, description='Event code',
+                                type=openapi.TYPE_STRING)
+	event_response = openapi.Response('Returns Event Object', EventSerializer)   
+	@swagger_auto_schema(
+		manual_parameters=[q],
+		tags=["Join Event"],
+		responses = {
+			'200' : event_response,
+			'400': 'Bad Request',
+			'404': openapi.Response(
+				description="Response 404",
+				examples = {
+				"error": "Event not found"
+				})
+		},		
+		security=[],
+		operation_id='Get event by code',
+		operation_description='Get data about an event a guest is about to join',
+	)
 	def get(self, request):
 		q = request.GET.get("q", None)
 		# print("q is ", q)
@@ -102,6 +148,41 @@ class JoinEventView(APIView):
 				status = status.HTTP_404_NOT_FOUND
 				)
 
+
+	param_guest_id  = openapi.Parameter('HTTP_GUEST', in_=openapi.IN_HEADER, description='Guest Device Id', type=openapi.TYPE_STRING)
+	event_response = openapi.Response('Returns Event Object', EventSerializer)   
+	@swagger_auto_schema(
+		manual_parameters=[param_guest_id, ],
+		tags=["join Event"],
+		request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'event_code': openapi.Schema(type=openapi.TYPE_STRING, description='Event Code'),
+        }),
+		responses = {
+		'200' : openapi.Response(
+			description="Successful",
+			examples = {
+			"joined": "True"
+			}),
+		'400': openapi.Response(
+			description="Response 404",
+			examples = {
+			"error": "Guest not found",
+			"joined": False,
+			}),
+		'404': openapi.Response(
+			description="Response 404",
+			examples = {
+			"error": "Event not found",
+			"joined": False,
+			})
+		},		
+		
+		security=[],
+		operation_id='Join Event',
+		operation_description='Endpoint used to join event',
+	)
 	def post(self, request):
 		headers = request.META.get("headers", None)
 		guest_id = request.META.get("HTTP_GUEST") or headers.get("HTTP_GUEST")
