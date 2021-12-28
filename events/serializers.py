@@ -8,7 +8,7 @@ from .models import Event, SongSuggestion, Notification, Song
 class EventSerializerForm(serializers.ModelSerializer):
 	class Meta:
 		model = Event
-		fields = ["id","name", "about", "event_date", "code", "event_time",]
+		fields = ["id","name", "image", "about", "event_date", "code", "event_time",]
 		
 
 class EventSerializer(serializers.ModelSerializer):

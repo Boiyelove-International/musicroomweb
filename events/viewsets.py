@@ -65,7 +65,9 @@ Storefront = IP to location to country code to lowercase
 # List all notifications - ones I got from events and suggestions
 
 
-
+#API Schema Response Params & Responses
+param_guest_id  = openapi.Parameter('HTTP_GUEST', in_=openapi.IN_HEADER, description='Guest Device Id', type=openapi.TYPE_STRING)
+event_response = openapi.Response('Returns Event Object', EventSerializer)   
 
 class SearchSongView(APIView):
 	term = openapi.Parameter('term', in_=openapi.IN_QUERY, description='term',
@@ -115,7 +117,7 @@ class JoinEventView(APIView):
 	event_response = openapi.Response('Returns Event Object', EventSerializer)   
 	@swagger_auto_schema(
 		manual_parameters=[q],
-		tags=["Join Event"],
+		tags=["Get Event -  Party Guest"],
 		responses = {
 			'200' : event_response,
 			'400': 'Bad Request',
@@ -149,11 +151,10 @@ class JoinEventView(APIView):
 				)
 
 
-	param_guest_id  = openapi.Parameter('HTTP_GUEST', in_=openapi.IN_HEADER, description='Guest Device Id', type=openapi.TYPE_STRING)
-	event_response = openapi.Response('Returns Event Object', EventSerializer)   
+	
 	@swagger_auto_schema(
 		manual_parameters=[param_guest_id, ],
-		tags=["join Event"],
+		tags=["Join Event - Party Guest"],
 		request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
@@ -235,6 +236,26 @@ class EventCreateView(ListCreateAPIView):
 	# 		return EventSerializer
 	# 	return self.serializer_class
 
+	# @swagger_auto_schema(mwethod="POST", request_body=openapi.Schema(
+ #        type=openapi.TYPE_OBJECT,
+ #        properties={
+ #            'namer': openapi.Schema(type=openapi.TYPE_STRING, description='The desc'),
+ #            'body': openapi.Schema(type=openapi.TYPE_STRING, description='The desc'),
+ #        }))
+
+	q = openapi.Parameter('q', in_=openapi.IN_QUERY, description='Query',
+                               type=openapi.TYPE_STRING)
+	@swagger_auto_schema(
+		manual_parameters=[param_guest_id, ],
+		tags=["Create Event"],
+		responses = {
+		'200' : event_response,
+		},		
+		
+		# security=[],
+		operation_id='Get Event',
+		operation_description='Get event details by name',
+	)
 	def get(self, request):
 		qs = Event.objects.all()
 		if request.auth:
