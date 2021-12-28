@@ -149,10 +149,10 @@ class EventCreateView(ListCreateAPIView):
 	queryset = Event.objects.all()
 	parser_classes = [JSONParser, MultiPartParser, FileUploadParser]
 
-	def get_serializer_class(self):
-		if self.request.method == "GET":
-			return EventSerializer
-		return self.serializer_class
+	# def get_serializer_class(self):
+	# 	if self.request.method == "GET":
+	# 		return EventSerializer
+	# 	return self.serializer_class
 
 	def get(self, request):
 		qs = Event.objects.all()
