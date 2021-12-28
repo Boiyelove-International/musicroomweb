@@ -56,7 +56,9 @@ class EventTests(APITestCase):
 		pg = PartyGuestFactory()
 		token = Token.objects.get(user=user)
 
-
+		event = EventFactory()
+		self.assertEqual(Event.objects.count(), 1)
+		self.assertTrue(type(event) is Event)
 
 		tmp_file = generate_image()
 		data = dict(name='House Party',
@@ -73,7 +75,7 @@ class EventTests(APITestCase):
 		response = self.client.post(url, data, format='multipart')
 		response_data = response.json()
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-		self.assertEqual(Event.objects.count(), 1)
+		self.assertEqual(Event.objects.count(), 2)
 
 
 		# test update event
@@ -90,7 +92,7 @@ class EventTests(APITestCase):
 		response = self.client.patch(url_2, data, format='multipart')
 		# print("response.json is", response.json())
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		self.assertEqual(Event.objects.count(), 1)
+		self.assertEqual(Event.objects.count(), 2)
 
 
 		#test delete event
@@ -98,11 +100,8 @@ class EventTests(APITestCase):
 		data["image"] = generate_image()
 		response = self.client.delete(url_2, data, format='multipart')
 		self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-		self.assertEqual(Event.objects.count(), 0)
-
-		event = EventFactory()
 		self.assertEqual(Event.objects.count(), 1)
-		self.assertTrue(type(event) is Event)
+
 
 
 	def test_search_song(self):

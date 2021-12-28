@@ -67,6 +67,7 @@ Storefront = IP to location to country code to lowercase
 
 #API Schema Response Params & Responses
 param_guest_id  = openapi.Parameter('HTTP_GUEST', in_=openapi.IN_HEADER, description='Guest Device Id', type=openapi.TYPE_STRING)
+param_event_id   = openapi.Parameter('pk', in_=openapi.IN_PATH, description='Event Id', type=openapi.TYPE_STRING)
 event_response = openapi.Response('Returns Event Object', EventSerializer)   
 
 class SearchSongView(APIView):
@@ -231,6 +232,7 @@ class EventCreateView(ListCreateAPIView):
 	queryset = Event.objects.all()
 	parser_classes = [JSONParser, MultiPartParser, FileUploadParser]
 
+
 	# def get_serializer_class(self):
 	# 	if self.request.method == "GET":
 	# 		return EventSerializer
@@ -243,17 +245,19 @@ class EventCreateView(ListCreateAPIView):
  #            'body': openapi.Schema(type=openapi.TYPE_STRING, description='The desc'),
  #        }))
 
+
 	q = openapi.Parameter('q', in_=openapi.IN_QUERY, description='Query',
                                type=openapi.TYPE_STRING)
 	@swagger_auto_schema(
 		manual_parameters=[param_guest_id, ],
-		tags=["Create Event"],
+		tags=["Get Event List - Event organizer / PartyGuest"],
 		responses = {
 		'200' : event_response,
 		},		
 		
 		# security=[],
 		operation_id='Get Event',
+		permission_classes = [IsAuthenticated],
 		operation_description='Get event details by name',
 	)
 	def get(self, request):
@@ -279,6 +283,24 @@ class EventCreateView(ListCreateAPIView):
 			endpoint_data.data,
 			status = status.HTTP_200_OK
 			)	
+
+
+	# @swagger_auto_schema(
+	
+	# 	tags=["Create an Event"],
+	# 	responses = {
+	# 	'200' : event_response,
+	# 	},		
+		
+	# 	# security=[],
+	# 	operation_id='Create Event',
+	# 	permission_classes = [IsAuthenticated],
+	# 	operation_description='Create an Event',
+	# )
+
+	@swagger_auto_schema(operation_description="POST /articles/{id}/image/")
+	def create(self, request, *args, **kwargs):
+		return super(EventCreateView, self).create(request, *args, **kwargs)
 
 	def perform_create(self, serializer):
 		serializer.save(organizer = self.request.auth.user)
@@ -368,8 +390,27 @@ class SuggestionUpdate(APIView):
 				self.pg = pg
 		return pg
 
+
+
+	@swagger_auto_schema(
+		manual_parameters=[param_guest_id, param_event_id ],
+		tags=["Suggest a song"],
+		responses = {
+			'200' : SongSuggestionSerializer,
+			'404': openapi.Response(
+				description="Response 404",
+				examples = {
+				"application/json": {"detail": "Item not found"}}),
+			'400': openapi.Response(
+				description="Response 400",
+				examples = {
+				"application/json": {"detail": "Guest Permission required"}}),
+		},		
 		
-	
+		# security=[],
+		operation_id='Suggest Song',
+		operation_description='Suggest a song for an event',
+	)	
 	def put(self, request, *args, **kwargs):
 		"""
 		Suggest song - Create - put
