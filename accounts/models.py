@@ -15,7 +15,7 @@ class Device(TimeStampedModel):
 	registration_id = models.CharField(max_length=256)
 	device_type = models.CharField(max_length=10, default="android")
 	device_name = models.CharField(max_length=60, null=True, blank=True)
-		
+	
 class PartyGuest(TimeStampedModel):
 	user = models.OneToOneField(Device, on_delete=models.CASCADE)
 	display_name = display_name = models.CharField(max_length=60)
