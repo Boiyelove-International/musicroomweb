@@ -262,21 +262,21 @@ class EventCreateView(ListCreateAPIView):
 	)
 	def get(self, request):
 		qs = Event.objects.all()
-		if request.auth:
-			qs = qs.filter(organizer = request.auth.user)
-		else:
-			guest_id = request.META.get("HTTP_GUEST")
-			if guest_id:
-				device = Device.objects.filter(
-					device_id = guest_id
-					).first()
-				if device:
-					pg = PartyGuest.objects.filter(user = device).first()
-					qs = Event.objects.filter(attendees=pg)
-			print("guest is ", guest_id)
-		q = request.GET.get("q", None)
-		if q:
-			qs = qs.filter(name__icontains = q)
+		# if request.auth.is_authenticated:
+		# 	qs = qs.filter(organizer = request.auth.user)
+		# else:
+		# 	guest_id = request.META.get("HTTP_GUEST")
+		# 	if guest_id:
+		# 		device = Device.objects.filter(
+		# 			device_id = guest_id
+		# 			).first()
+		# 		if device:
+		# 			pg = PartyGuest.objects.filter(user = device).first()
+		# 			qs = Event.objects.filter(attendees=pg)
+		# 	print("guest is ", guest_id)
+		# q = request.GET.get("q", None)
+		# if q:
+		# 	qs = qs.filter(name__icontains = q)
 
 		endpoint_data = EventSerializer(qs, many=True)
 		return Response(
@@ -298,9 +298,9 @@ class EventCreateView(ListCreateAPIView):
 	# 	operation_description='Create an Event',
 	# )
 
-	@swagger_auto_schema(operation_description="POST /articles/{id}/image/")
-	def create(self, request, *args, **kwargs):
-		return super(EventCreateView, self).create(request, *args, **kwargs)
+	# @swagger_auto_schema(operation_description="POST /articles/{id}/image/")
+	# def create(self, request, *args, **kwargs):
+	# 	return super(EventCreateView, self).create(request, *args, **kwargs)
 
 	def perform_create(self, serializer):
 		serializer.save(organizer = self.request.auth.user)

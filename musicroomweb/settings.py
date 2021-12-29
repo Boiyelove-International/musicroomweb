@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['musicroomweb.herokuapp.com', "127.0.0.1", "localhost"]
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'events.apps.EventsConfig',
     'drf_yasg',
+    "fcm_django",
 ]
 
 MIDDLEWARE = [
@@ -87,6 +89,10 @@ DATABASES = {
     }
 }
 
+FCM_DJANGO_SETTINGS = {
+    "FCM_SERVER_KEY": "AAAA_-BAkME:APA91bGYrbzIDH5h6LgRxuyPRywmCYoSaPbkEVsV3rBLpBiWEd5ce1LLUqLc8W_GPQvi8kUcCRvUyTroE5dCRt464C4x0eZk1wQpL1prX_phI2MyFiIlfDdja96_fwIR8Aoq-ADMakhl",
+    
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

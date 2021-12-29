@@ -95,6 +95,11 @@ class EventTests(APITestCase):
 		self.assertEqual(Event.objects.count(), 2)
 
 
+		# test returns the right data
+		url_3 = reverse('events:events-list-create')
+		response = self.client.get(url_3, format='json')
+		self.assertEqual(len(response.json()), 2)
+
 		#test delete event
 		url_2= reverse('events:events-detail-update-delete', kwargs={"pk":response_data["id"]})
 		data["image"] = generate_image()

@@ -8,8 +8,12 @@ class EventOrganizer(TimeStampedModel):
 	display_name = models.CharField(max_length=60)
 	profile_photo = models.ImageField(upload_to="profile_photo", null=True, blank=True)
 
+
+DEVICE_CHOICES = (("android", "Android"),("ios", "IOS"))
 class Device(TimeStampedModel):
 	device_id = models.CharField(max_length=256)
+	registration_id = models.CharField(max_length=256)
+	device_type = models.CharField(max_length=10, default="android")
 	device_name = models.CharField(max_length=60, null=True, blank=True)
 		
 class PartyGuest(TimeStampedModel):

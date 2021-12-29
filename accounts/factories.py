@@ -17,13 +17,7 @@ class UserFactory(DjangoModelFactory):
 		model = User
 
 
-# class EventOrganizerFactory(DjangoModelFactory):
-# 	user = factory.SubFactory(UserFactory)
-# 	display_name = factory.LazyAttributeSequence(lambda o, n: '%s_%s' % (o.user.first_name, n))
-# 	# profile_photo = models.ImageField(upload_to="profile_photo", null=True, blank=True)
 
-# 	class Meta:
-# 		model = EventOrganizer
 
 class DeviceFactory(DjangoModelFactory):
 	device_name = factory.Faker('word')
