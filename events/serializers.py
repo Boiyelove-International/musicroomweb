@@ -9,17 +9,31 @@ class EventSerializerForm(serializers.ModelSerializer):
 	class Meta:
 		model = Event
 		fields = ["id","name", "image", "about", "event_date", "code", "event_time",]
+
+
 		
 
 class EventSerializer(serializers.ModelSerializer):
 	accepted_suggestions = serializers.SerializerMethodField('accepted_suggestions')
 	organizer_display_picture = serializers.SerializerMethodField('get_organizer_picture')
 	organizer = serializers.SerializerMethodField('get_organizer_display_name')
+	image = serializers.SerializerMethodField("get_image_url")
 
 	class Meta:
 		model = Event
 		fields = "__all__"
 
+
+	def get_image_url(self, obj):
+		request = self.context.get('request')
+		if obj.image and hasattr(obj.image, 'url'):
+			url = obj.image.url
+			if request:
+				return request.build_absolute_uri(url)
+			else:
+				return url
+		else:
+			return None
 
 	def accepted_suggestions(self, obj):
 		suggestions = obj.suggestions.all()

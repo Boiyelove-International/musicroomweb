@@ -138,7 +138,7 @@ class JoinEventView(APIView):
 		event = Event.objects.filter(
 			code = q).first()
 		if event:
-			s = EventSerializer(event)
+			s = EventSerializer(event, context={"request": request})
 			# print("s data is", s.data)
 			return Response(
 				s.data,
@@ -278,7 +278,7 @@ class EventCreateView(ListCreateAPIView):
 		if q:
 			qs = qs.filter(name__icontains = q)
 
-		endpoint_data = EventSerializer(qs, many=True)
+		endpoint_data = EventSerializer(qs, many=True, context={'request': request})
 		return Response(
 			endpoint_data.data,
 			status = status.HTTP_200_OK
