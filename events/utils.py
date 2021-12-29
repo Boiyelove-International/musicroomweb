@@ -85,6 +85,11 @@ def gen_code(k=4):
 	return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(k))
 
 
+def create_sample_events():
+	from django.contrib.auth.models import User
+	u = User.objects.get(email="roland@boiyelove.website")
+	from .factories import EventFactory
+	return EventFactory.create_batch(size=20, organizer=u)
 # 	{
 #     "previews": [
 #         {
