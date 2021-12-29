@@ -29,6 +29,7 @@ class DeviceFactory(DjangoModelFactory):
 class PartyGuestFactory(DjangoModelFactory):
 	user = factory.SubFactory(DeviceFactory)
 	display_name = factory.Faker('first_name')
+	profile_photo =  factory.django.ImageField(color="red")
 
 	class Meta:
 		model = PartyGuest

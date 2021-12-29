@@ -87,9 +87,13 @@ def gen_code(k=4):
 
 def create_sample_events():
 	from django.contrib.auth.models import User
+	from accounts.factories import PartyGuestFactory
 	u = User.objects.get(email="roland@boiyelove.website")
 	from .factories import EventFactory
-	return EventFactory.create_batch(size=20, organizer=u)
+	pg_list = PartyGuestFactory.create_batch(size=15)
+	events = EventFactory.create_batch(size=20, organizer=u, attendees = pg_list)
+	return events
+
 # 	{
 #     "previews": [
 #         {

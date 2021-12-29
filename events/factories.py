@@ -6,6 +6,7 @@ from accounts.factories import UserFactory
 from .models import Event
 
 
+
 class EventFactory(DjangoModelFactory):
 	name = factory.Faker('word')
 	about = factory.Faker('sentence')
@@ -16,6 +17,17 @@ class EventFactory(DjangoModelFactory):
 
 	class Meta:
 		model = Event
+
+
+	@factory.post_generation
+	def attendees(self, create, extracted, **kwargs):
+		if not create:
+			# Simple build, do nothing.
+			return
+		if extracted:
+			# A list of products were passed in, use them
+			for pg in extracted:
+				self.attendees.add(pg)
 
 
 # class SongSuggestion(TimeStampedModel):

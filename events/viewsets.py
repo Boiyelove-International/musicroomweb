@@ -188,6 +188,7 @@ class JoinEventView(APIView):
 	def post(self, request):
 		headers = request.META.get("headers", None)
 		guest_id =  None
+		# pprint.pprint(request.META)
 		if headers:
 			guest_id = headers.get("HTTP_GUEST")
 		else:
