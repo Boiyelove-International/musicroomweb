@@ -149,6 +149,10 @@ class PartyGuestRegistration(serializers.Serializer):
 			user = device,
 			display_name = self.validated_data["display_name"])
 
-		
+
+class PartyGuestSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = PartyGuest
+		fields = ("display_name", "profile_photo",)
 
 

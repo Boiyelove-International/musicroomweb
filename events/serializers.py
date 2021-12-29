@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from accounts.models import EventOrganizer
+from accounts.serializers import PartyGuestSerializer
 from .models import Event, SongSuggestion, Notification, Song
 
 
@@ -18,6 +19,7 @@ class EventSerializer(serializers.ModelSerializer):
 	organizer_display_picture = serializers.SerializerMethodField('get_organizer_picture')
 	organizer = serializers.SerializerMethodField('get_organizer_display_name')
 	image = serializers.SerializerMethodField("get_image_url")
+	attendees = PartyGuestSerializer(many=True, read_only=True)
 
 	class Meta:
 		model = Event

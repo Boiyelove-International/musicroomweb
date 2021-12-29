@@ -173,15 +173,21 @@ class PartyGuestEventTests(APITestCase):
 		pg = PartyGuestFactory()
 		headers = {"HTTP_GUEST": pg.user.device_id}
 		url = reverse("events:join-event")
-		event = EventFactory()
+		pg_list = PartyGuestFactory.create_batch(size=15)
+		event = EventFactory(attendees=pg_list)
 		self.assertTrue(type(event) is Event)
 		response = self.client.get(url + "?q=%s" % event.code, headers=headers, format="json")
+		# event_data = response.json()
+		# event_data.
+		# print("event data", event_data)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		#Todo: Test that attendee data is also serialized
 
 		#Todo: Add header authentication for guests
 		
 		response = self.client.post(url, headers=headers,  data={"event_code": event.code}, format="json")
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 		self.assertTrue(pg in event.attendees.all())
 		#Todo: check if partyguest is a part of event_attendees
 

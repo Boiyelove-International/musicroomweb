@@ -87,6 +87,10 @@ def gen_code(k=4):
 
 def create_sample_events():
 	from django.contrib.auth.models import User
+	from accounts.models import PartyGuest
+	from  events.models import Event
+	Event.objects.all().delete()
+	PartyGuest.objects.all().delete()
 	from accounts.factories import PartyGuestFactory
 	u = User.objects.get(email="roland@boiyelove.website")
 	from .factories import EventFactory

@@ -2,7 +2,7 @@ import time
 from datetime import datetime
 import factory
 from factory.django import DjangoModelFactory
-from accounts.factories import UserFactory
+from accounts.factories import UserFactory, PartyGuestFactory
 from .models import Event
 
 
@@ -14,6 +14,8 @@ class EventFactory(DjangoModelFactory):
 	event_date = factory.LazyFunction(datetime.today)
 	image = factory.django.ImageField(color="blue")
 	organizer = factory.SubFactory(UserFactory)
+	attendees = factory.RelatedFactoryList(
+        PartyGuestFactory)
 
 	class Meta:
 		model = Event
