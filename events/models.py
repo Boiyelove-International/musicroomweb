@@ -36,6 +36,9 @@ class Event(TimeStampedModel):
 		)
 	attendees = models.ManyToManyField(PartyGuest, editable=False)
 
+	def suggestions(self):
+		return SongSuggestion.objects.filter(event = self)
+
 class SongSuggestion(TimeStampedModel):
 	event = models.ForeignKey(Event, on_delete=models.CASCADE)
 	song = models.ForeignKey(Song, on_delete=models.CASCADE)

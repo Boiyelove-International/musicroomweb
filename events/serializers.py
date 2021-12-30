@@ -6,6 +6,19 @@ from accounts.serializers import PartyGuestSerializer
 from .models import Event, SongSuggestion, Notification, Song
 
 
+
+class SongSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Song
+		fields = "__all__"
+
+
+class SongSuggestionSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = SongSuggestion
+		fields = "__all__"
+		depth = 1
+
 class EventSerializerForm(serializers.ModelSerializer):
 	class Meta:
 		model = Event
@@ -15,7 +28,7 @@ class EventSerializerForm(serializers.ModelSerializer):
 		
 
 class EventSerializer(serializers.ModelSerializer):
-	accepted_suggestions = serializers.SerializerMethodField('accepted_suggestions')
+	suggestions = SongSuggestionSerializer(many=True)
 	organizer_display_picture = serializers.SerializerMethodField('get_organizer_picture')
 	organizer = serializers.SerializerMethodField('get_organizer_display_name')
 	image = serializers.SerializerMethodField("get_image_url")
@@ -37,12 +50,8 @@ class EventSerializer(serializers.ModelSerializer):
 		else:
 			return None
 
-	def accepted_suggestions(self, obj):
-		suggestions = obj.suggestions.all()
-		if suggestions:
-			return suggestions.filter(status=True).count()
-		else:
-			return 0
+
+
 
 	def get_organizer_picture(self, obj):
 		eo = EventOrganizer.objects.filter(
@@ -62,15 +71,7 @@ class NotificationSerializer(serializers.ModelSerializer):
 		model = Notification
 		fields = "__all__"
 
-class SongSuggestionSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = SongSuggestion
-		fields = "__all__"
 
-class SongSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Song
-		fields = "__all__"
 
 class SearchSerializer(serializers.Serializer):
 	term =  serializers.CharField(max_length = 60)

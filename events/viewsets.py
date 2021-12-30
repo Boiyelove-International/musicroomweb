@@ -380,6 +380,7 @@ class SuggestionUpdate(APIView):
 	Remove suggestion - delete - delete
 	"""
 
+
 	def get_party_guest(self):
 		# Check user
 		headers = self.request.META.get("headers", None)
@@ -395,6 +396,28 @@ class SuggestionUpdate(APIView):
 				self.pg = pg
 		return pg
 
+
+	def get(self, request, *args, **kwargs):
+
+		# Check user
+		if self.get_party_guest():
+			#Check event
+			event_id = kwargs.get("pk",None)
+			
+			try:
+				event = Event.objects.get(id= event_id)
+				ss = SongSuggestion.objects.filter(event = event, suggested_by = self.pg)
+				ss = SongSuggestionSerializer(ss, many=True)
+				return Response(
+				ss.data,
+				status = status.HTTP_200_OK)
+			except ObjectDoesNotExist:
+				return Response(
+					{"detail": "Event not found"},
+					status = status.HTTP_404_NOT_FOUND)
+		return Response(
+				{"detail": "Guest Permission required"},
+				status = status.HTTP_400_BAD_REQUEST)
 
 
 	@swagger_auto_schema(
