@@ -428,8 +428,16 @@ class SuggestionUpdate(APIView):
 			try:
 				apple_song_id = request.data.get("apple_song_id", None)
 				event = Event.objects.get(id= event_id)
-				song = Song.objects.filter(apple_song_id = apple_song_id).first()
-				ss, created = SongSuggestion.objects.get_or_create(
+				song = Song.objects.get(apple_song_id = apple_song_id)
+				ss = SongSuggestion.objects.filter(
+					event = event,
+						song = song,
+						suggested_by = self.pg
+					)
+				if ss.exists():
+					ss = ss.first()
+				else:
+					ss = SongSuggestion.objects.create(
 						event = event,
 						song = song,
 						suggested_by = self.pg)

@@ -226,6 +226,7 @@ class PartyGuestEventTests(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(SongSuggestion.objects.all().count(), 1)
 		self.assertEqual(SongSuggestion.objects.all().first().song.apple_song_id, data_list[0]["apple_song_id"])
+	
 		#Todo must be attendee before suggesting
 
 
