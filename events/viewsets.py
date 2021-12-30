@@ -429,7 +429,7 @@ class SuggestionUpdate(APIView):
 				apple_song_id = request.data.get("apple_song_id", None)
 				event = Event.objects.get(id= event_id)
 				song = Song.objects.filter(apple_song_id = apple_song_id).first()
-				ss = SongSuggestion.objects.create(
+				ss, created = SongSuggestion.objects.get_or_create(
 						event = event,
 						song = song,
 						suggested_by = self.pg)
