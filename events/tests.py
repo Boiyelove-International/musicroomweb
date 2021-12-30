@@ -204,9 +204,10 @@ class PartyGuestEventTests(APITestCase):
 	def test_search_song(self):
 		pg = PartyGuestFactory()
 		headers = {"HTTP_GUEST": pg.user.device_id}
-		url = reverse('events:search') + "?term=Davido Fia"
+		url = reverse('events:search') + "?term=hit"
 		response = self.client.get(url, headers=headers, format="json")
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(len(response.json()), Song.objects.count())
 
 
 	def test_suggest_song_and_remove_song_suggestion(self):
@@ -226,7 +227,7 @@ class PartyGuestEventTests(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(SongSuggestion.objects.all().count(), 1)
 		self.assertEqual(SongSuggestion.objects.all().first().song.apple_song_id, data_list[0]["apple_song_id"])
-	
+
 		#Todo must be attendee before suggesting
 
 
