@@ -492,6 +492,15 @@ class SuggestionUpdate(APIView):
 				pk = kwargs.get("pk",None)
 				#Todo: Check if user is owner
 				spk = request.data.get("suggestion_id", None)
+
+				play_song = request.data.get("play_song", None)
+				if play_song:
+					pass
+
+				play_song_next = request.data.get("play_song_next", None)
+				if play_song_next:
+					pass
+
 				ss = SongSuggestion.objects.get(id = spk)
 				accepted = request.data.get("accept_suggestion", None)
 				if accepted != None:

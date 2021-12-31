@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'events.apps.EventsConfig',
     'drf_yasg',
     "fcm_django",
+    'ordered_model',
 ]
 
 MIDDLEWARE = [
@@ -91,7 +92,8 @@ DATABASES = {
 
 FCM_DJANGO_SETTINGS = {
     "FCM_SERVER_KEY": "AAAA_-BAkME:APA91bGYrbzIDH5h6LgRxuyPRywmCYoSaPbkEVsV3rBLpBiWEd5ce1LLUqLc8W_GPQvi8kUcCRvUyTroE5dCRt464C4x0eZk1wQpL1prX_phI2MyFiIlfDdja96_fwIR8Aoq-ADMakhl",
-    
+    "APP_VERBOSE_NAME": "MusicRoom",
+
 }
 
 # Password validation

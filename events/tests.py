@@ -2,6 +2,7 @@ import os
 import base64
 import shutil
 import tempfile
+import pprint
 from io import BytesIO
 from PIL import Image
 from django.conf import settings
@@ -88,7 +89,7 @@ class EventTests(APITestCase):
 		url_2= reverse('events:events-detail-update-delete', kwargs={"pk":response_data["id"]})
 		response = self.client.get(url_2, data, format='json')
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		print(response.json())
+		# print(response.json())
 
 
 		# test update event
@@ -243,6 +244,7 @@ class PartyGuestEventTests(APITestCase):
 		# Test list song suggestion for event
 		url = reverse("events:events-suggestions", kwargs={"pk": event.id})
 		response = self.client.get(url, data, headers=headers, format="json")
+		pprint.pprint(response.json())
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(len(response.json()), 1)
 

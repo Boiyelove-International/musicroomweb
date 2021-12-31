@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.conf import settings
 from model_utils.models import TimeStampedModel
+from ordered_model.models import OrderedModel
 from accounts.models import PartyGuest, EventOrganizer
 
 
@@ -39,12 +40,27 @@ class Event(TimeStampedModel):
 	def suggestions(self):
 		return SongSuggestion.objects.filter(event = self)
 
-class SongSuggestion(TimeStampedModel):
+	def playlist(self):
+		ss = self.suggestions()
+		if ss:
+			ss = ss.filter(accepted = True)
+		return ss
+
+
+class SongSuggestion(TimeStampedModel, OrderedModel):
 	event = models.ForeignKey(Event, on_delete=models.CASCADE)
 	song = models.ForeignKey(Song, on_delete=models.CASCADE)
 	accepted = models.BooleanField(null=True)
 	is_playing = models.BooleanField(null=True) #Null  not played, playing = true, played = false
 	suggested_by = models.ForeignKey(PartyGuest, on_delete=models.CASCADE)
+	order_with_respect_to = ('event', 'created')
+
+	# def play_next(self):
+	# 	event = self.event
+	# 	ss = event.suggestions()
+	# 	self.
+
+
 
 
 class Playlist(TimeStampedModel):
