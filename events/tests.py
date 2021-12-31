@@ -6,6 +6,7 @@ from io import BytesIO
 from PIL import Image
 from django.conf import settings
 from django.urls import reverse
+from django.test import override_settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIRequestFactory, APITestCase
@@ -26,6 +27,7 @@ from .utils import search_music
 # Accept Suggestion
 # Deny Suggestion
 # Remove suggestion - Party Guest
+TEST_DIR = "test_data"
 
 def generate_image():
 	bts = BytesIO()
@@ -41,6 +43,10 @@ class SongTests(APITestCase):
 		result2 = search_music("davido fia")
 		self.assertEqual(previous_model_count, Song.objects.all().count())
 
+
+
+
+@override_settings(MEDIA_ROOT=(TEST_DIR + '/media'))
 class EventTests(APITestCase):
 	# def setUp(self):
 	# 	if "test_media" not in settings.MEDIA_ROOT:
@@ -82,6 +88,7 @@ class EventTests(APITestCase):
 		url_2= reverse('events:events-detail-update-delete', kwargs={"pk":response_data["id"]})
 		response = self.client.get(url_2, data, format='json')
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		print(response.json())
 
 
 		# test update event
@@ -137,7 +144,7 @@ class EventTests(APITestCase):
 		url = reverse("events:events-suggestions", kwargs={"pk": event.id})
 		data = {"accept_suggestion": True, "suggestion_id": ss["id"]}
 		response = self.client.patch(url, data, format="json")
-		print(response.json())
+		# print(response.json())
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
@@ -163,10 +170,11 @@ class EventTests(APITestCase):
 		url = reverse("events:events-suggestions", kwargs={"pk": event.id})
 		data = {"accept_suggestion": False, "suggestion_id": ss["id"]}
 		response = self.client.patch(url, data, format="json")
-		print(response.json())
+		# print(response.json())
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
+@override_settings(MEDIA_ROOT=(TEST_DIR + '/media'))
 class PartyGuestEventTests(APITestCase):
 
 	def test_join_an_event(self):
@@ -217,6 +225,7 @@ class PartyGuestEventTests(APITestCase):
 
 		url = reverse('events:search') + "?term=Davido Fia"
 		response = self.client.get(url, headers=headers, format="json")
+		# print(response.json())
 		data_list = response.json()
 
 		data = {"apple_song_id": data_list[0]["apple_song_id"]}
@@ -247,3 +256,10 @@ class PartyGuestEventTests(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 		#Todo: Test already suggested
 
+
+def tearDownModule():
+    print("\nDeleting temporary files...\n")
+    try:
+        shutil.rmtree(TEST_DIR)
+    except OSError:
+        pass

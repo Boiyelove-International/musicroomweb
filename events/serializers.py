@@ -33,6 +33,7 @@ class EventSerializer(serializers.ModelSerializer):
 	organizer = serializers.SerializerMethodField('get_organizer_display_name')
 	image = serializers.SerializerMethodField("get_image_url")
 	attendees = PartyGuestSerializer(many=True, read_only=True)
+	suggesters_count = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Event
@@ -51,6 +52,11 @@ class EventSerializer(serializers.ModelSerializer):
 			return None
 
 
+	def get_suggesters_count(self, obj):
+		try:
+			return SongSuggestion.objects.filter(event = obj).distinct("suggested_by").count()
+		except:
+			return 0
 
 
 	def get_organizer_picture(self, obj):

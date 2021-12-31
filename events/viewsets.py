@@ -454,11 +454,14 @@ class SuggestionUpdate(APIView):
 				song = Song.objects.get(apple_song_id = apple_song_id)
 				ss = SongSuggestion.objects.filter(
 					event = event,
-						song = song,
-						suggested_by = self.pg
+						song = song
 					)
 				if ss.exists():
 					ss = ss.first()
+					ss = SongSuggestionSerializer(ss)
+					return Response(
+					ss.data,
+					status = status.HTTP_200_OK)
 				else:
 					ss = SongSuggestion.objects.create(
 						event = event,

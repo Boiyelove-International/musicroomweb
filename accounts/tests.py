@@ -1,8 +1,11 @@
 import time
+import shutil
+import tempfile
 from datetime import datetime
 from django.core import mail
 from django.conf import settings
 from django.urls import reverse, reverse_lazy
+from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, APITestCase
 from django.contrib.auth.models import User
@@ -15,6 +18,10 @@ from .factories import PartyGuestFactory
 # request = factory.post("url", dict(data), format="json")
 
 
+TEST_DIR = "test_data"
+
+
+@override_settings(MEDIA_ROOT=(TEST_DIR + '/media'))
 class AccountAPITestCase(APITestCase):
 
 	def test_api_create_account(self):
@@ -68,3 +75,9 @@ class AccountAPITestCase(APITestCase):
 
 
 
+def tearDownModule():
+    print("\nDeleting temporary files...\n")
+    try:
+        shutil.rmtree(TEST_DIR)
+    except OSError:
+        pass
