@@ -149,6 +149,19 @@ class EventTests(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
+		data = {"play_song_next": True, "suggestion_id": ss["id"]}
+		response = self.client.patch(url, data, format="json")
+		# print(response.json())
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertDictEqual(response.json(), {"detail": "Playing song next"})
+
+
+		data = {"playing_song": True, "suggestion_id": ss["id"]}
+		response = self.client.patch(url, data, format="json")
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertDictEqual(response.json(), {"detail": "Playing song"})
+
+
 	def test_deny_suggestion(self):
 		pg = PartyGuestFactory()
 		headers = {"HTTP_GUEST": pg.user.device_id}

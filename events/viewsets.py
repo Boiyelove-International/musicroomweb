@@ -493,7 +493,7 @@ class SuggestionUpdate(APIView):
 				#Todo: Check if user is owner
 				spk = request.data.get("suggestion_id", None)
 
-				play_song = request.data.get("play_song", None)
+				play_song = request.data.get("playing_song", None)
 				if play_song:
 					return Response(
 						{"detail": "Playing song"},
