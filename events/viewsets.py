@@ -495,11 +495,16 @@ class SuggestionUpdate(APIView):
 
 				play_song = request.data.get("play_song", None)
 				if play_song:
-					pass
+					return Response(
+						{"detail": "Playing song"},
+						status = status.HTTP_200_OK)
+				
 
 				play_song_next = request.data.get("play_song_next", None)
 				if play_song_next:
-					pass
+					return Response(
+						{"detail": "Playing song next"},
+						status = status.HTTP_200_OK)
 
 				ss = SongSuggestion.objects.get(id = spk)
 				accepted = request.data.get("accept_suggestion", None)
