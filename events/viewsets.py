@@ -3,7 +3,7 @@ import pprint
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from django.core.files.base import ContentFile
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.mixins import DestroyModelMixin
 from rest_framework.generics import  ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
@@ -69,6 +69,25 @@ Storefront = IP to location to country code to lowercase
 param_guest_id  = openapi.Parameter('HTTP_GUEST', in_=openapi.IN_HEADER, description='Guest Device Id', type=openapi.TYPE_STRING)
 param_event_id   = openapi.Parameter('pk', in_=openapi.IN_PATH, description='Event Id', type=openapi.TYPE_STRING)
 event_response = openapi.Response('Returns Event Object', EventSerializer)   
+
+
+class PartyGuestAuthenticated(permissions.BasePermission):
+
+	def has_permission(self, request, view):
+		headers = request.META.get("headers", None)
+		guest_id =  None
+		# pprint.pprint(request.META)
+		if request.method == "GET":
+			if headers:
+				guest_id = headers.get("HTTP_GUEST")
+			else:
+				guest_id = request.META.get("HTTP_GUEST")
+			# pprint.pprint(request.META)
+			if guest_id:
+				if PartyGuest.objects.filter(user__device_id = guest_id).exists():
+					return True
+		return False
+
 
 class SearchSongView(APIView):
 	term = openapi.Parameter('term', in_=openapi.IN_QUERY, description='term',
@@ -232,7 +251,7 @@ class JoinEventView(APIView):
 
 
 class EventCreateView(ListCreateAPIView):
-	permission_classes = [IsAuthenticated]
+	permission_classes = [PartyGuestAuthenticated | IsAuthenticated]
 	serializer_class = EventSerializerForm
 	queryset = Event.objects.all()
 	parser_classes = [JSONParser, MultiPartParser, FileUploadParser]
