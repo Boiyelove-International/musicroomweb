@@ -30,6 +30,7 @@ class Event(TimeStampedModel):
 	about = models.CharField(max_length = 320)
 	event_time = models.TimeField()
 	event_date = models.DateField()
+	event_ended = models.DateTimeField(null=True, blank=True)
 	image = models.ImageField(upload_to="event_images")
 	code = models.CharField(max_length=4, editable=False, default="ABCD")
 	organizer = models.ForeignKey(
