@@ -30,11 +30,11 @@ from .utils import search_music
 # Remove suggestion - Party Guest
 TEST_DIR = "test_data"
 
-def generate_image():
+def generate_image(x=1):
 	bts = BytesIO()
 	image = Image.new("RGB", (300,300))
 	image.save(bts, 'jpeg')
-	return SimpleUploadedFile('test.jpeg', bts.getvalue())
+	return SimpleUploadedFile('test%s.jpeg' % x, bts.getvalue())
 
 class SongTests(APITestCase):
 	def test_no_duplicate_songs_created(self):
@@ -89,18 +89,22 @@ class EventTests(APITestCase):
 		url_2= reverse('events:events-detail-update-delete', kwargs={"pk":response_data["id"]})
 		response = self.client.get(url_2, data, format='json')
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		# print(response.json())
+		# pprint.pprint(response.json())
 
 
 		# test update event
 		url_2= reverse('events:events-detail-update-delete', kwargs={"pk":response_data["id"]})
 		data["name"]='House Party 2 Edited'
 		# file1 = open("media/test_files/" + "test_image.jpeg", 'rb')
-		data["image"] = generate_image()
+		data["image"] = generate_image(x=2)
 		response = self.client.patch(url_2, data, format='multipart')
 		# print("response.json is", response.json())
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(Event.objects.count(), 2)
+		self.assertEqual(response.json()["image"], "http://testserver/media/event_images/test2.jpeg")
+		# pprint.pprint(response.json())
+
+		#Todo: Check that image was updated
 
 
 		# test returns the right length of data
@@ -257,7 +261,7 @@ class PartyGuestEventTests(APITestCase):
 		# Test list song suggestion for event
 		url = reverse("events:events-suggestions", kwargs={"pk": event.id})
 		response = self.client.get(url, data, headers=headers, format="json")
-		pprint.pprint(response.json())
+		# pprint.pprint(response.json())
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(len(response.json()), 1)
 

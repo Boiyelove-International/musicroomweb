@@ -46,7 +46,7 @@ class GuestRegistrationView(APIView):
 	def post(self, request):
 		file = request.data.get("file", None)
 		profile_photo = request.data.get("profile_photo", None)
-		print("request.data file", request.data.get("file", None))
+		# print("request.data file", request.data.get("file", None))
 		serializer = PartyGuestRegistration(data=request.data)
 		serializer.is_valid(raise_exception = True)
 		serializer.create()
@@ -81,7 +81,7 @@ class CustomAuthToken(ObtainAuthToken):
 
 	def post(self, request, *args, **kwargs):
 		social = request.data.get("social", None)
-		print("request.data is", request.data)
+		# print("request.data is", request.data)
 		user = None
 		eo = None
 		display_name = None
@@ -193,7 +193,7 @@ class UserDetailView(APIView):
 
 		elif action_type == 'change_name':
 			display_name = request.data.get("display_name")
-			print("user is", request.auth.user)
+			# print("user is", request.auth.user)
 			if display_name:
 				organizer = EventOrganizer.objects.get(user = request.auth.user)
 				organizer.display_name = display_name
@@ -203,7 +203,7 @@ class UserDetailView(APIView):
 					'display_name': display_name,
 					},
 					status=status.HTTP_200_OK)
-			print('errors are ', serializer.errors)
+			# print('errors are ', serializer.errors)
 			errors.update(serializer.errors)
 
 
@@ -213,9 +213,9 @@ class UserDetailView(APIView):
 			try: 
 				email_ver = EmailAddress.objects.get(user=request.auth.user, email=email, code=code)
 				email_ver.swap_email()
-				print(request.user)
-				print(request.auth.user)
-				print(request.auth.user.refresh_from_db)
+				# print(request.user)
+				# print(request.auth.user)
+				# print(request.auth.user.refresh_from_db)
 				return Response({'email': request.auth.user.email}, status=status.HTTP_200_OK)
 			except EmailAddress.DoesNotExist:
 				errors.update({'error': 'invalid code'})
