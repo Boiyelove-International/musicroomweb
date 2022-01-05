@@ -49,7 +49,7 @@ class AccountAPITestCase(APITestCase):
 		response = self.client.post(url, data, format='json')
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-		#test social create account
+		#test social login create account
 		data = 	{
 		"social": "facebook",
 		"access_token": "gfdsfghjjfdffhgjhj",
@@ -58,6 +58,11 @@ class AccountAPITestCase(APITestCase):
 		"name": "Social User",
 		"image_url": "https://picsum.photos/id/237/200/300"
 		}
+		response = self.client.post(url, data, format='json')
+		# pprint.pprint(response.json())
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+		#test social login no error on repeat create account
 		response = self.client.post(url, data, format='json')
 		pprint.pprint(response.json())
 		self.assertEqual(response.status_code, status.HTTP_200_OK)

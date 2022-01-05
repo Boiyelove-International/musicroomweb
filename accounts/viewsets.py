@@ -126,12 +126,12 @@ class CustomAuthToken(ObtainAuthToken):
 					username = email,
 					email = email,
 					first_name = display_name)
-				eo = EventOrganizer.objects.filter(user = user)
-				if eo.exists():
-					eo = eo.first()
-					if image_url and (eo.social_profile_photo != image_url):
-						eo.social_profile_photo = image_url
-						eo.save()
+			eo = EventOrganizer.objects.filter(user = user)
+			if eo.exists():
+				eo = eo.first()
+				if image_url and (eo.social_profile_photo != image_url):
+					eo.social_profile_photo = image_url
+					eo.save()
 
 		if not social:
 			serializer = self.serializer_class(
