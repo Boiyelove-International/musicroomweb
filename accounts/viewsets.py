@@ -84,6 +84,7 @@ class CustomAuthToken(ObtainAuthToken):
 		print("request.data is", request.data)
 		user = None
 		eo = None
+		display_name = None
 		socials = ["facebook", "google"]
 		if social in socials :
 			if social == socials[0]:
@@ -129,6 +130,7 @@ class CustomAuthToken(ObtainAuthToken):
 			eo = EventOrganizer.objects.filter(user = user)
 			if eo.exists():
 				eo = eo.first()
+				display_name = eo.display_name
 				if image_url and (eo.social_profile_photo != image_url):
 					eo.social_profile_photo = image_url
 					eo.save()
@@ -141,6 +143,7 @@ class CustomAuthToken(ObtainAuthToken):
 			serializer.is_valid(raise_exception=True)
 			user = serializer.validated_data['user']
 			eo = EventOrganizer.objects.filter(user=user).first()
+			display_name = eo.display_name
 		# print("user is", user)
 		token, created = Token.objects.get_or_create(user=user)
 		
@@ -148,7 +151,7 @@ class CustomAuthToken(ObtainAuthToken):
 		return Response({
 					'token': token.key,
 					'email': user.email,
-					'display_name': eo.display_name,
+					'display_name': display_name,
 					})
 
 
