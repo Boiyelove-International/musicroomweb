@@ -6,8 +6,9 @@ from model_utils.models import TimeStampedModel
 class EventOrganizer(TimeStampedModel):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	display_name = models.CharField(max_length=60)
-	profile_photo = models.ImageField(upload_to="profile_photo", null=True, blank=True)
-	social_profile_photo = models.URLField(null=True, blank=True)
+	profile_photo = models.ImageField(upload_to="profile_photo", null=True, blank=True, default="organizer-profile-icon.png")
+	social_profile_photo = models.URLField(null=True, blank=True,)
+
 
 
 DEVICE_CHOICES = (("android", "Android"),("ios", "IOS"))
@@ -20,7 +21,8 @@ class Device(TimeStampedModel):
 class PartyGuest(TimeStampedModel):
 	user = models.OneToOneField(Device, on_delete=models.CASCADE)
 	display_name = display_name = models.CharField(max_length=60)
-	profile_photo = models.ImageField(upload_to="profile_photo", null=True, blank=True)
+	profile_photo = models.ImageField(upload_to="profile_photo", null=True, blank=True, default="avatar_upload.png")
+
 
 
 
