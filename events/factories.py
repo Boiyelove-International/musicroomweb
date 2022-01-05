@@ -12,7 +12,7 @@ class EventFactory(DjangoModelFactory):
 	about = factory.Faker('sentence')
 	event_time = factory.LazyFunction(lambda: datetime.now())
 	event_date = factory.LazyFunction(datetime.today)
-	image = factory.django.ImageField(color="blue")
+	# image = factory.django.ImageField(color="blue")
 	organizer = factory.SubFactory(UserFactory)
 	attendees = factory.RelatedFactoryList(
         PartyGuestFactory)
