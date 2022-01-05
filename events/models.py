@@ -31,7 +31,7 @@ class Event(TimeStampedModel):
 	event_time = models.TimeField()
 	event_date = models.DateField()
 	event_ended = models.DateTimeField(null=True, blank=True)
-	image = models.ImageField(upload_to="event_images", default="party_people_3.png")
+	image = models.ImageField(upload_to="event_images", default="event_images/party_people_3.png")
 	code = models.CharField(max_length=4, editable=False, default="ABCD")
 	organizer = models.ForeignKey(
 		User, on_delete = models.CASCADE, editable=False

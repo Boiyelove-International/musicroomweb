@@ -21,7 +21,7 @@ class Device(TimeStampedModel):
 class PartyGuest(TimeStampedModel):
 	user = models.OneToOneField(Device, on_delete=models.CASCADE)
 	display_name = display_name = models.CharField(max_length=60)
-	profile_photo = models.ImageField(upload_to="profile_photo", null=True, blank=True, default="avatar_upload.png")
+	profile_photo = models.ImageField(upload_to="profile_photo", null=True, blank=True, default="profile_photo/avatar_upload.png")
 
 
 
