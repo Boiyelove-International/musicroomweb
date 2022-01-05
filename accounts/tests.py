@@ -1,3 +1,4 @@
+import pprint
 import time
 import shutil
 import tempfile
@@ -47,6 +48,20 @@ class AccountAPITestCase(APITestCase):
 		data = dict(username="testuser@boiyelove.website", password="somenewpassword")
 		response = self.client.post(url, data, format='json')
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+		#test social create account
+		data = 	{
+		"social": "facebook",
+		"access_token": "gfdsfghjjfdffhgjhj",
+		"id_token": "dfdgfhgjhkdf",
+		"email": "social@boiyelove.website",
+		"name": "Social User",
+		"image_url": "https://picsum.photos/id/237/200/300"
+		}
+		response = self.client.post(url, data, format='json')
+		pprint.pprint(response.json())
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
 
 

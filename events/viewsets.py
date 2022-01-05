@@ -284,8 +284,10 @@ class EventCreateView(ListCreateAPIView):
 		permission_classes = [IsAuthenticated],
 		operation_description='Get event details by name',
 	)
+
 	def get(self, request):
 		qs = Event.objects.all()
+		qt = self.request.GET.get("order_by", None)
 		if request.auth:
 			qs = qs.filter(organizer = request.auth.user)
 		else:
@@ -477,6 +479,8 @@ class SuggestionUpdate(APIView):
 					)
 				if ss.exists():
 					ss = ss.first()
+					if pg not in ss.suggesters.all():
+						ss.suggesters.add(pg)
 					ss = SongSuggestionSerializer(ss)
 					return Response(
 					ss.data,
@@ -486,6 +490,7 @@ class SuggestionUpdate(APIView):
 						event = event,
 						song = song,
 						suggested_by = self.pg)
+					ss.suggesters.add(self.pg)
 				if ss:
 					ss = SongSuggestionSerializer(ss)
 					return Response(
@@ -511,28 +516,31 @@ class SuggestionUpdate(APIView):
 				pk = kwargs.get("pk",None)
 				#Todo: Check if user is owner
 				spk = request.data.get("suggestion_id", None)
+				ss = SongSuggestion.objects.filter(id = spk,
+						event = Event.objects.get(id = pk))
+				if ss.exists():
+					ss = ss.first()
+					play_song = request.data.get("playing_song", None)
+					if play_song:
+						return Response(
+							{"detail": "Playing song"},
+							status = status.HTTP_200_OK)
+					
 
-				play_song = request.data.get("playing_song", None)
-				if play_song:
-					return Response(
-						{"detail": "Playing song"},
-						status = status.HTTP_200_OK)
-				
+					play_song_next = request.data.get("play_song_next", None)
+					if play_song_next:
+						return Response(
+							{"detail": "Playing song next"},
+							status = status.HTTP_200_OK)
 
-				play_song_next = request.data.get("play_song_next", None)
-				if play_song_next:
-					return Response(
-						{"detail": "Playing song next"},
-						status = status.HTTP_200_OK)
-
-				ss = SongSuggestion.objects.get(id = spk)
-				accepted = request.data.get("accept_suggestion", None)
-				if accepted != None:
-					ss.accepted = accepted
-					ss.save()
-					return Response(
-						{"detail": "Suggestion updated"},
-						status = status.HTTP_200_OK)
+					
+					accepted = request.data.get("accept_suggestion", None)
+					if accepted != None:
+						ss.accepted = accepted
+						ss.save()
+						return Response(
+							{"detail": "Suggestion updated"},
+							status = status.HTTP_200_OK)
 			except ObjectDoesNotExist:
 				return Response(
 					{"detail": "Item not found"},
@@ -551,11 +559,13 @@ class SuggestionUpdate(APIView):
 			#Check event
 			pk = kwargs.get("pk", None)
 			spk = request.data.get("suggestion_id", None)
-			ss=SongSuggestion.objects.filter(id = spk,
-						event = Event.objects.get(id = pk),
-						suggested_by = self.pg).first()
+			ss = SongSuggestion.objects.filter(id = spk,
+						event = Event.objects.get(id = pk)).first()
 			if ss:
-				ss.delete()
+				if self.pg in ss.suggesters.all():
+					ss.suggesters.remove(self.pg)
+					if (self.pg == ss.suggested_by) and (ss.suggesters.all().count() == 0):
+						ss.delete()
 				# if the resoonse is 204, don't proses the  json
 				return Response(
 					status = status.HTTP_204_NO_CONTENT)

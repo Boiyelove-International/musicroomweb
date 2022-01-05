@@ -7,6 +7,7 @@ class EventOrganizer(TimeStampedModel):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	display_name = models.CharField(max_length=60)
 	profile_photo = models.ImageField(upload_to="profile_photo", null=True, blank=True)
+	social_profile_photo = models.URLField(null=True, blank=True)
 
 
 DEVICE_CHOICES = (("android", "Android"),("ios", "IOS"))

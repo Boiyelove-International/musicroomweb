@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView, Response
@@ -79,21 +80,75 @@ class PartyGuestProfile(APIView):
 class CustomAuthToken(ObtainAuthToken):
 
 	def post(self, request, *args, **kwargs):
-		serializer = self.serializer_class(
-			data = request.data,
-			context ={'request': request})
-		# print("request.data is", request.data)
-		serializer.is_valid(raise_exception=True)
-		user = serializer.validated_data['user']
+		social = request.data.get("social", None)
+		print("request.data is", request.data)
+		user = None
+		eo = None
+		socials = ["facebook", "google"]
+		if social in socials :
+			if social == socials[0]:
+				#Todo: Verify Facebook
+				# 				graph = facebook.GraphAPI(access_token=request.data.get("access_token", None):, version="12.0")
+				#  "https://graph.facebook.com/USER-ID?fields=id,name,email,picture&access_token=ACCESS-TOKEN"
+				# "access_token" : result.accessToken.token,
+				# "id_token" : result.accessToken.userId,
+				# "email": profile['email'],
+				# "name": profile['first_name']+' '+profile['last_name'],
+				# "image_url": profile['picture']['data']['url'],
+				pass
+
+			elif social == socials[1]:
+				#Todo Verify Google
+							# "access_token" : userCredential?.accessToken,
+				#   "id_token" : userCredential?.idToken,
+				#   "email": data?.email,
+				#   "name": data?.displayName,
+				#   "image_url": data?.photoUrl,
+				pass
+
+			elif social == socials[2]:
+				#Todo Verify Google
+							# "access_token" : userCredential?.accessToken,
+				#   "id_token" : userCredential?.idToken,
+				#   "email": data?.email,
+				#   "name": data?.displayName,
+				#   "image_url": data?.photoUrl,
+				pass
+
+			email = request.data.get("email")
+			display_name = request.data.get("name")
+			image_url = request.data.get("image_url")
+			user = User.objects.filter(email = email)
+			if user.exists():
+				user = user.first()
+			else:
+				user = User.objects.create(
+					username = email,
+					email = email,
+					first_name = display_name)
+				eo = EventOrganizer.objects.filter(user = user)
+				if eo.exists():
+					eo = eo.first()
+					if image_url and (eo.social_profile_photo != image_url):
+						eo.social_profile_photo = image_url
+						eo.save()
+
+		if not social:
+			serializer = self.serializer_class(
+				data = request.data,
+				context ={'request': request})
+			# print("request.data is", request.data)
+			serializer.is_valid(raise_exception=True)
+			user = serializer.validated_data['user']
+			eo = EventOrganizer.objects.filter(user=user).first()
 		# print("user is", user)
 		token, created = Token.objects.get_or_create(user=user)
-		obj = EventOrganizer.objects.filter(user=user).first()
-
+		
 
 		return Response({
 					'token': token.key,
 					'email': user.email,
-					'display_name': obj.display_name,
+					'display_name': eo.display_name,
 					})
 
 
