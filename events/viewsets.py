@@ -404,13 +404,14 @@ class SuggestionUpdate(APIView):
 
 	def get_party_guest(self):
 		# Check user
-		
+
 		guest_id = None
 		try:
 			headers = self.request.META.get("headers", None)
-			guest_id = self.request.META.get("HTTP_GUEST")
+			guest_id = headers.get("HTTP_GUEST", None)
 		except:
-			guest_id = headers.get("HTTP_GUEST")
+			guest_id = self.request.META.get("HTTP_GUEST", None)
+			
 
 		pg = None
 
