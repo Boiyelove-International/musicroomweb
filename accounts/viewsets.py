@@ -6,6 +6,7 @@ from rest_framework.views import APIView, Response
 from accounts.models import EventOrganizer, EmailAddress
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
+from .models import Device
 from .serializers import UserSerializer, PasswordChangeSerializer, PartyGuestRegistration
 
 
