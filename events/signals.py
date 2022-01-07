@@ -44,10 +44,10 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
 		if os.path.isfile(old_file.path):
 			os.remove(old_file.path)
 
-@receiver(post_save, sender=SongSuggestion)
-def notify_organizer_of_new_suggestion(sender, instance, created, **kwargs):
-	if created:
-		Notification.objects.create(
-			event = instance.event,
-			content = "%s suggested %s for event" % (instance.suggested_by.display_name, instance.song.song_title)
-			)
+# @receiver(post_save, sender=SongSuggestion)
+# def notify_organizer_of_new_suggestion(sender, instance, created, **kwargs):
+# 	if created:
+# 		Notification.objects.create(
+# 			event = instance.event,
+# 			content = "%s suggested %s for event" % (instance.suggested_by.display_name, instance.song.song_title)
+# 			)
