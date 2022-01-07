@@ -399,6 +399,7 @@ class SuggestionListView(ListAPIView):
 class SuggestionUpdate(APIView):
 	serializer_class = SongSuggestionSerializer
 	queryset = SongSuggestion.objects.all()
+	# permission_classes = [PartyGuestAuthenticated | IsAuthenticated]
 	# http_method_names = ['put', 'patch', 'delete']
 	"""
 	Suggest song - Create - put
@@ -478,7 +479,7 @@ class SuggestionUpdate(APIView):
 		"""
 
 		# Check user
-		if self.get_party_guest():
+		if self.get_party_guest() or request.user.is_authenticated:
 			#Check event
 			event_id = kwargs.get("pk",None)
 			try:
@@ -489,20 +490,31 @@ class SuggestionUpdate(APIView):
 					event = event,
 						song = song
 					)
-				if ss.exists():
-					ss = ss.first()
-					if pg not in ss.suggesters.all():
-						ss.suggesters.add(pg)
-					ss = SongSuggestionSerializer(ss)
-					return Response(
-					ss.data,
-					status = status.HTTP_200_OK)
+				if request.user.is_authenticated:
+					if ss.exists():
+						ss.accepted = True
+						ss.save()
+					else:
+						ss = SongSuggestion.objects.create(
+							event = event,
+							song = song,
+							accepted = True)
+
 				else:
-					ss = SongSuggestion.objects.create(
-						event = event,
-						song = song,
-						suggested_by = self.pg)
-					ss.suggesters.add(self.pg)
+					if ss.exists():
+						ss = ss.first()
+						if pg not in ss.suggesters.all():
+							ss.suggesters.add(pg)
+						ss = SongSuggestionSerializer(ss)
+						return Response(
+						ss.data,
+						status = status.HTTP_200_OK)
+					else:
+						ss = SongSuggestion.objects.create(
+							event = event,
+							song = song,
+							suggested_by = self.pg)
+						ss.suggesters.add(self.pg)
 				if ss:
 					ss = SongSuggestionSerializer(ss)
 					return Response(

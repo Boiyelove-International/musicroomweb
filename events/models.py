@@ -56,7 +56,7 @@ class SongSuggestion(TimeStampedModel, OrderedModel):
 	song = models.ForeignKey(Song, on_delete=models.CASCADE)
 	accepted = models.BooleanField(null=True)
 	is_playing = models.BooleanField(null=True) #Null  not played, playing = true, played = false
-	suggested_by = models.ForeignKey(PartyGuest, on_delete=models.CASCADE, related_name="suggested_by")
+	suggested_by = models.ForeignKey(PartyGuest, null=True, on_delete=models.CASCADE, related_name="suggested_by")
 	order_with_respect_to = ('event', 'created')
 	suggesters = models.ManyToManyField(PartyGuest, editable=False, related_name="suggesters")
 
@@ -71,10 +71,6 @@ class SongSuggestion(TimeStampedModel, OrderedModel):
 	# 	self.
 
 
-
-
-class Playlist(TimeStampedModel):
-	pass
 
 
 

@@ -100,8 +100,8 @@ def create_sample_events():
 	for u in User.objects.all():
 		pg_list = PartyGuestFactory.create_batch(size=15)
 		events = EventFactory.create_batch(size=20, organizer=u, attendees = pg_list)
-	Event.objects.all().update(image="event_images/party_people_3.png")
-	EventOrganizer.objects.all().update(profile_photo = "profile_photo/organizer-profile-icon.png")
-	PartyGuest.objects.all().update(profile_photo = "profile_photo/avatar_upload.png")
+	# Event.objects.all().update(image="event_images/party_people_3.png")
+	# EventOrganizer.objects.all().update(profile_photo = "profile_photo/organizer-profile-icon.png")
+	# PartyGuest.objects.all().update(profile_photo = "profile_photo/avatar_upload.png")
 	return events
 
