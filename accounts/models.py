@@ -15,7 +15,7 @@ class EventOrganizer(TimeStampedModel):
 DEVICE_CHOICES = (("android", "Android"),("ios", "IOS"))
 class Device(TimeStampedModel):
 	device_id = models.CharField(max_length=256)
-	registration_id = models.CharField(max_length=256)
+	fcm_id = models.CharField(max_length=256)
 	device_type = models.CharField(max_length=10, default="android")
 	device_name = models.CharField(max_length=60, null=True, blank=True)
 	show_notification = models.BooleanField(default = True)
