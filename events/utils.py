@@ -87,51 +87,21 @@ def gen_code(k=4):
 
 def create_sample_events():
 	from django.contrib.auth.models import User
-	from accounts.models import PartyGuest
-	from  events.models import Event
-	Event.objects.all().delete()
-	PartyGuest.objects.all().delete()
-	from accounts.factories import PartyGuestFactory
-	u = User.objects.get(email="roland@boiyelove.website")
+	from accounts.models import PartyGuest, EventOrganizer
+	from accounts.factories import UserFactory
 	from .factories import EventFactory
-	pg_list = PartyGuestFactory.create_batch(size=15)
-	events = EventFactory.create_batch(size=20, organizer=u, attendees = pg_list)
+	from  events.models import Event
+
+	# Event.objects.all().delete()
+	# PartyGuest.objects.all().delete()
+	from accounts.factories import PartyGuestFactory
+	# u = User.objects.get(email="roland@boiyelove.website")
+	UserFactory.create_batch(size = 30)
+	for u in User.objects.all():
+		pg_list = PartyGuestFactory.create_batch(size=15)
+		events = EventFactory.create_batch(size=20, organizer=u, attendees = pg_list)
+	Event.objects.all().update(image="event_images/party_people_3.png")
+	EventOrganizer.objects.all().update(profile_photo = "profile_photo/organizer-profile-icon.png")
+	PartyGuest.objects.all().update(profile_photo = "profile_photo/avatar_upload.png")
 	return events
 
-# 	{
-#     "previews": [
-#         {
-#             "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/d7/11/95/d71195c0-291e-ec96-cb50-ad92f998b0b8/mzaf_15801233003829582823.plus.aac.p.m4a"
-#         }
-#     ],
-#     "artwork": {
-#         "width": 3000,
-#         "height": 3000,
-#         "url": "https://is4-ssl.mzstatic.com/image/thumb/Music116/v4/5b/3c/28/5b3c286f-9416-1b46-94f2-0b20e201dc78/886449679881.jpg/{w}x{h}bb.jpg",
-#         "bgColor": "081841",
-#         "textColor1": "f3fdf5",
-#         "textColor2": "809cd8",
-#         "textColor3": "c4cfd1",
-#         "textColor4": "6882ba"
-#     },
-#     "artistName": "Mayorkun & Victony",
-#     "url": "https://music.apple.com/us/album/holy-father/1591883469?i=1591883478",
-#     "discNumber": 1,
-#     "genreNames": [
-#         "Afrobeats",
-#         "Music",
-#         "African"
-#     ],
-#     "durationInMillis": 184000,
-#     "releaseDate": "2021-10-27",
-#     "name": "Holy Father",
-#     "isrc": "UK43Q2114426",
-#     "hasLyrics": true,
-#     "albumName": "Holy Father - Single",
-#     "playParams": {
-#         "id": "1591883478",
-#         "kind": "song"
-#     },
-#     "trackNumber": 1,
-#     "composerName": "Adewale Mayowa Emmanuel & Victor Ebuka Anthony"
-# }

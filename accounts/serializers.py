@@ -138,6 +138,15 @@ class PartyGuestRegistration(serializers.Serializer):
 			device_id = self.validated_data["device_id"],
 		# device_name =self.validated_data["device_name"]
 			)
+		request = self.context.get('request')
+		fcm_id = request.META.get("HTTP_FCM_DEVICE_ID", None)
+		device_type = request.META.get("HTTP_DEVICEOS", None)
+		device_name = request.META.get("HTTP_DEVICENAME", None)
+		if fcm_id:
+			device.fcm_id = fcm_id
+			device.device_type = device_type
+			device.device_name = device_name
+			device.save()
 		try:
 			pg = PartyGuest.objects.get(
 			user = device,

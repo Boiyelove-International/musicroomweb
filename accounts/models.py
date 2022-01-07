@@ -6,7 +6,7 @@ from model_utils.models import TimeStampedModel
 class EventOrganizer(TimeStampedModel):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	display_name = models.CharField(max_length=60)
-	profile_photo = models.ImageField(upload_to="profile_photo", null=True, blank=True, default="organizer-profile-icon.png")
+	profile_photo = models.ImageField(upload_to="profile_photo", null=True, blank=True, default="profile_photo/organizer-profile-icon.png")
 	social_profile_photo = models.URLField(null=True, blank=True,)
 	devices = models.ManyToManyField('Device', editable=False)
 

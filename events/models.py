@@ -47,6 +47,9 @@ class Event(TimeStampedModel):
 			ss = ss.filter(accepted = True)
 		return ss
 
+	def get_event_topic(self):
+		return "event_%s_%s" % (self.pk, self.code)
+
 
 class SongSuggestion(TimeStampedModel, OrderedModel):
 	event = models.ForeignKey(Event, on_delete=models.CASCADE)
@@ -56,6 +59,11 @@ class SongSuggestion(TimeStampedModel, OrderedModel):
 	suggested_by = models.ForeignKey(PartyGuest, on_delete=models.CASCADE, related_name="suggested_by")
 	order_with_respect_to = ('event', 'created')
 	suggesters = models.ManyToManyField(PartyGuest, editable=False, related_name="suggesters")
+
+
+	@classmethod
+	def get_event_suggestions_by_me(cls, event, pg):
+		cls.objects.filter(models.Q(event = event, suggested_by = pg) or models.Q(suggesters__in = [pg]))
 
 	# def play_next(self):
 	# 	event = self.event
@@ -70,9 +78,8 @@ class Playlist(TimeStampedModel):
 
 
 
-
 class Notification(TimeStampedModel):
-	event = models.ForeignKey(Event, on_delete=models.SET_NULL, null=True)
+	event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True)
 	content = models.CharField(max_length = 120)
 	organizer = models.ForeignKey(EventOrganizer, on_delete=models.CASCADE, null=True )
 	guest = models.ForeignKey(PartyGuest, on_delete=models.CASCADE, null=True)

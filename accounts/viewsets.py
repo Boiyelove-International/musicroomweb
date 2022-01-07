@@ -49,7 +49,8 @@ class GuestRegistrationView(APIView):
 		file = request.data.get("file", None)
 		profile_photo = request.data.get("profile_photo", None)
 		# print("request.data file", request.data.get("file", None))
-		serializer = PartyGuestRegistration(data=request.data)
+	
+		serializer = PartyGuestRegistration(data=request.data, context={"request": request})
 		serializer.is_valid(raise_exception = True)
 		serializer.create()
 		return Response(
