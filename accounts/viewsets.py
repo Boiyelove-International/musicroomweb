@@ -148,6 +148,17 @@ class CustomAuthToken(ObtainAuthToken):
 			user = serializer.validated_data['user']
 			eo = EventOrganizer.objects.filter(user=user).first()
 			display_name = eo.display_name
+			fcm_id = request.META.get("HTTP_FCM_DEVICE_ID", None)
+			device_id = request.META.get("HTTP_DEVICEID", None)
+			device_type = request.META.get("HTTP_DEVICEOS", None)
+			device_name = request.META.get("HTTP_DEVICENAME", None)
+			if device_id and fcm_id:
+				device, created = Device.objects.get_or_create(device_id = device_id)
+				device.fcm_id = fcm_id
+				device.device_type = device_type
+				device.device_name = device_name
+				device.save()
+				eo.devices.add(device)
 		# print("user is", user)
 		token, created = Token.objects.get_or_create(user=user)
 		

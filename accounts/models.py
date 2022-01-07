@@ -8,6 +8,7 @@ class EventOrganizer(TimeStampedModel):
 	display_name = models.CharField(max_length=60)
 	profile_photo = models.ImageField(upload_to="profile_photo", null=True, blank=True, default="organizer-profile-icon.png")
 	social_profile_photo = models.URLField(null=True, blank=True,)
+	devices = models.ManyToManyField('Device', editable=False)
 
 
 
@@ -17,6 +18,9 @@ class Device(TimeStampedModel):
 	registration_id = models.CharField(max_length=256)
 	device_type = models.CharField(max_length=10, default="android")
 	device_name = models.CharField(max_length=60, null=True, blank=True)
+	show_notification = models.BooleanField(default = True)
+
+
 	
 class PartyGuest(TimeStampedModel):
 	user = models.OneToOneField(Device, on_delete=models.CASCADE)
