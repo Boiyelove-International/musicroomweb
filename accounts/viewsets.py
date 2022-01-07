@@ -1,3 +1,4 @@
+import pprint
 from django.contrib.auth.models import User
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -81,6 +82,9 @@ class CustomAuthToken(ObtainAuthToken):
 
 	def post(self, request, *args, **kwargs):
 		social = request.data.get("social", None)
+		pprint.pprint(request.META)
+		print(" ")
+		pprint.pprint(request.data)
 		# print("request.data is", request.data)
 		user = None
 		eo = None
