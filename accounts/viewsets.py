@@ -125,6 +125,7 @@ class CustomAuthToken(ObtainAuthToken):
 			email = request.data.get("email")
 			display_name = request.data.get("name")
 			image_url = request.data.get("image_url")
+			print("Request.data is", request.data)
 			user = User.objects.filter(email = email)
 			if user.exists():
 				user = user.first()
@@ -135,10 +136,16 @@ class CustomAuthToken(ObtainAuthToken):
 					first_name = display_name)
 			eo = EventOrganizer.objects.filter(user = user)
 			if eo.exists():
+				save_eo = False
 				eo = eo.first()
-				display_name = eo.display_name
+				if display_name and not eo.display_name:
+					eo.display_name = display_name
+					display_name = eo.display_name
+					save_oe = True
 				if image_url and (eo.social_profile_photo != image_url):
 					eo.social_profile_photo = image_url
+					save_eo = True
+				if save_eo:
 					eo.save()
 
 		if not social:
