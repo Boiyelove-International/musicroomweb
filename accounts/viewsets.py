@@ -148,6 +148,12 @@ class CustomAuthToken(ObtainAuthToken):
 					save_eo = True
 				if save_eo:
 					eo.save()
+			else:
+				eo =EventOrganizer.objects.create(
+					user = user ,
+					display_name = display_name,
+					social_profile_photo = image_url
+					)
 
 		if not social:
 			serializer = self.serializer_class(
