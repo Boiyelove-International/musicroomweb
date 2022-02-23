@@ -124,6 +124,7 @@ class CustomAuthToken(ObtainAuthToken):
 
 			email = request.data.get("email")
 			display_name = request.data.get("name")
+			print("display name from data is", display_name)
 			image_url = request.data.get("image_url")
 			print("Request.data is", request.data)
 			user = User.objects.filter(email = email)
