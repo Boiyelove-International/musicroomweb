@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import netifaces
 load_dotenv()
 
 
@@ -29,7 +30,18 @@ SECRET_KEY = 'django-insecure-=u9t0r*3(2e+)ou8u)#m5po--48ftd#8x-u+onyh31vn!t#$)g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['musicroomweb.herokuapp.com', "127.0.0.1", "localhost"]
+
+def ip_addresses():
+    ip_list = []
+    for interface in netifaces.interfaces():
+        addrs = netifaces.ifaddresses(interface)
+        for x in (netifaces.AF_INET, netifaces.AF_INET6):
+            if x in addrs:
+                ip_list.append(addrs[x][0]['addr'])
+    return ip_list
+
+ALLOWED_HOSTS = ip_addresses()
+ALLOWED_HOSTS += ['137.184.247.196', 'app.musicalroom.co.uk','musicroomweb.herokuapp.com', "127.0.0.1", "localhost"]
 
 
 
@@ -87,11 +99,22 @@ WSGI_APPLICATION = 'musicroomweb.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'django',
+        'USER': 'django',
+        'PASSWORD': 'fd8a530d784d2c56a2f651ca7d9d6c81',
+        'HOST': 'localhost',
+        'PORT': '',
+        }
 }
 
 FCM_DJANGO_SETTINGS = {
