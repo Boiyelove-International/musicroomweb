@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "musicalroom-58bc9",
+  "private_key_id": "29fc35ccb6ffc972fb1e063703517961f015548e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC063xccXhkkX4h\npIkDJvdxd+ROKsNdlkCFYTRiEJnjtqyeTqOgAep1KO5jGGkmCRcI5yRjsu086Gew\n7qPP86oNucgNFxiItwyjTtyD2TL9TZvQFk9V7/r75cjQ93bpSct7v3fF6QCf5srm\nWsfRz4dWKXU3Fmq99Ykq+wdiemIa0KCyiodR9fjPVVvBaMQS9FokHJvPL2gtitTV\n6kyIA3p8V1oPxquGoMMrt+u+Ye+FWpD601zKXx6hc4V1NCScLQnsr280LBTtwRbd\nn+mB2hv9PlAdV4vZ9qiVuOh94l546caxHjaSmTbHsD0fAjQ5yupTp/62qodJkfRb\nSpa4BzmFAgMBAAECggEADvFoSyZgIEZYGaVCX81HIMsbQ02K517yo1GdBwCCBWng\nJg8uupeN6vFfhzXL8YVMrsKQod90ctRrRBTh2NoyUIHowRQIRbqAw7hOxGEbMgrH\n9M7y7JEutMGM7Z2S57/dm7H7zY/qKkrgtVgIKw8uCXLRKKSkWl4+Xxtux7Z+BeLT\npDJY5japJXx39PBJySae5VRAarGeDWnSF0Oo9MT7uiBDimdm1NhUK2eIhlWn/3pX\n/udpn06z/ZJKcmNuohyN+XKabPg0Luv+1oaOI5fVepRKHDyCSeOSF1hdVc7yANBQ\nJCga9QctKoQGozDq/9OsBYe/yPOUOzxSzl98K3HzvQKBgQDysW04jIxiQLzYk+jh\ndt7zs+Oag41dV2FK3ah3HMUCOA0AVfCK05MzJQixHb7llF7VNUg+8SGyfl7PzA2h\n+1wMShqQ/aui0Uy7EqhvwrhPzAiQ6R6oSiUFuzQyi1BcUTd1F87fH26WYA1XQYBH\ncEhm54gY8xxIa+Pp5xxO/Bo2vwKBgQC+1vn5kaWWK/Wo5hMfgManeCk4lY0acSY0\nXUm4pOXRdQzukw72pM9e8rGAoNFGtQvWk0xhZaOcFGgWWAw2ynkdgsXewNpX863U\n4xFcaudKxwwAWYHuwGVh1DTxDmm5JSzPqUiSv+rpuXHxHGG1g1d7wFFmIfvQ6s0c\nWFvAPcnEuwKBgQC4Bi2JeZlhTzFjEBTAEcDRDhCBs0rYAk/10snRN/Fy00mYfZHd\n0ryFRYmns6RytOSLytEzWOhyTjxaWKHlt5F+iBpI4vDojsgd+fHafM4BQ/ci2oGy\nnjYgeGkGAnk25yakFR96NH1IbSDwjuxUPyHHVbzvHjjN+XFihSoEAklmRQKBgFBF\n/yoyUJOldBUSijKzKVyiV7x8c7kOpUJbhzoK6ry7XrAv3Zhz5OKMdYukmcMDPrKI\njRVe+n4Zu1rCuIiHjICUVIUJXA6o6pLk3JWiRh4XMf4nqFb0SPDooUhQhrohYAMN\nswA/iCG+JqaECLmgQLlGQTcTzmenjJWCuT1ZADknAoGBANPLXaO+lCw/+DgRdMIB\n6eG5nj/8ZyOzlnyQNwxePSvf5cBbyRrXSWNtV9dX4JhPYJRfLJdgMee93y2o1PVg\nhBgHLkzqEW7F9IoKCyC15ky2ilVQc/Lkew6bcZz61Sh4RdUmTCtBmV7+wSzyodV0\n/CN1HGsownYzRaDF7jxKI/vE\n-----END PRIVATE KEY-----\n",
+  "client_email": "musicalroom-web-logger@musicalroom-58bc9.iam.gserviceaccount.com",
+  "client_id": "109206708853576904589",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/musicalroom-web-logger%40musicalroom-58bc9.iam.gserviceaccount.com"
+}
