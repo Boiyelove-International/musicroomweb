@@ -71,7 +71,7 @@ class EventTests(APITestCase):
 		data = dict(name='House Party',
 			about= "This is a house party come celebrate with us",
 			event_date = "2021-11-23",
-			event_time = "11:22 AM",
+			event_time = "11:22",
 			image = tmp_file
 			)
 
@@ -81,6 +81,7 @@ class EventTests(APITestCase):
 		# test created event
 		response = self.client.post(url, data, format='multipart')
 		response_data = response.json()
+		# pprint.pprint(response_data)
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(Event.objects.count(), 2)
 
