@@ -25,17 +25,20 @@ class OrganizerRegistrationView(APIView):
 
 	def post(self, request):
 		request.data["username"] =  request.data.get('email', None)
+		email_serializer = EmailValidationSerializer(data=request.data.get('email', None))
 		serializer = UserSerializer(data=request.data)
-		if serializer.is_valid():
+		if email_serializer.is_valid() and serializer.is_valid():
 			serializer.create(validated_data=request.data)
 			return Response(
 				serializer.data,
 				status = status.HTTP_201_CREATED
 				)
+		errors = email_serializer.errors
+		errors.update(serializer.errors)
 		return Response(
 			{
 				"error": True,
-				"errors": serializer.errors,
+				"errors": errors,
 
 			},
 			status= status.HTTP_400_BAD_REQUEST
