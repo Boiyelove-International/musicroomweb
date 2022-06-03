@@ -27,6 +27,10 @@ class UserSerializer(serializers.ModelSerializer):
 				fields = ['username', 'email']
 				)
 			]
+	def validate_email(self, value):
+		if User.objects.filter(email = value.strip()).exists():
+			raise serializers.ValidationError('Account already exists')
+		return value
 
 
 class NotificationsSerializer(serializers.ModelSerializer):
@@ -44,7 +48,7 @@ class EmailValidationSerializer(serializers.ModelSerializer):
 	def validate_email(self, value):
 		user = self.get_user()
 		if EmailAddress.objects.filter(email = user.email, validation_type='activation', verified=False).exists():
-			raise serializer.ValidationError('Please verify your default email address to continue')
+			raise serializers.ValidationError('Please verify your default email address to continue')
 
 		if  User.objects.filter(email = value).exists() or EmailAddress.objects.filter(email = value).exists():
 			raise serializers.ValidationError('Email already registered')
