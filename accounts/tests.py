@@ -43,6 +43,11 @@ class AccountAPITestCase(APITestCase):
 		self.assertEqual(EventOrganizer.objects.get(user=user).display_name, "Userperson")
 		self.assertEqual(Token.objects.count(), 1)
 
+		#test user can't registter twice
+		response = self.client.post(url, data, format='json')
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(User.objects.count(), 1)
+
 		#test login
 		url = reverse('accounts:login-user')
 		data = dict(username="testuser@boiyelove.website", password="somenewpassword")
