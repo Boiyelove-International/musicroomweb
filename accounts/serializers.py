@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
+from rest_framework.validators import UniqueTogetherValidator,UniqueValidator
 from .models import EventOrganizer, EmailAddress, PasswordResetRequest, Device, PartyGuest
 
 
@@ -25,12 +25,19 @@ class UserSerializer(serializers.ModelSerializer):
 			UniqueTogetherValidator(
 				queryset=User.objects.all(),
 				fields = ['username', 'email']
-				)
+				),
 			]
+
 	def validate_email(self, value):
-		if User.objects.filter(email = value.strip()).exists():
-			raise serializers.ValidationError('Account already exists')
-		return value
+		if not User.objects.filter(email = value.strip()).exists():
+			return value
+		raise serializers.ValidationError('Account already exists')
+
+	def validate_username(self, value):
+		print("entered username validation state")
+		if User.objects.filter(username = value.strip()).exists():
+			return value
+		raise serializers.ValidationError('Account already exists')
 
 
 class NotificationsSerializer(serializers.ModelSerializer):
