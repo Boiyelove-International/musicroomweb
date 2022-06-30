@@ -35,7 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 	def validate_username(self, value):
 		print("entered username validation state")
-		if User.objects.filter(username = value.strip()).exists():
+		if not User.objects.filter(username = value.strip()).exists():
 			return value
 		raise serializers.ValidationError('Account already exists')
 
