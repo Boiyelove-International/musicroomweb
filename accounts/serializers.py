@@ -1,4 +1,8 @@
+import re
+import pprint
+import json
 from django.contrib.auth.models import User
+from django.contrib.auth import password_validation
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator,UniqueValidator
 from .models import EventOrganizer, EmailAddress, PasswordResetRequest, Device, PartyGuest
@@ -28,13 +32,36 @@ class UserSerializer(serializers.ModelSerializer):
 				),
 			]
 
+	def validate_password(self, value):
+		password_validation.validate_password(value, self.instance)
+		passCheck = re.compile("^[A-Za-z0-9@#!$%^&+=]{8,}$")
+		if passCheck.fullmatch(value):
+			return value
+		raise serializers.ValidationError("Choose a stronger password. Your password must be a minium of 8 characters.\n It must contain at least 1 Uppercase (A-Z), 1 lowercase (a-z), 1 Number (0-9) and 1 Special character (@#!$%^&+=)")
+
+	def validate(self, data):
+		xdata = data.copy()
+		data.pop("display_name", None)
+		user = User(**data)
+		password = data.get("password")
+		errors = dict()
+		try:
+			password_validation.validate_password(password=password, user=user)
+		except exceptions.ValidationError as e:
+			errors['password'] = list(e.messages)
+
+		if errors:
+			raise serializers.ValidationError(errors)
+
+		return super(UserSerializer, self).validate(xdata)
+
 	def validate_email(self, value):
 		if not User.objects.filter(email = value.strip()).exists():
 			return value
 		raise serializers.ValidationError('Account already exists')
 
 	def validate_username(self, value):
-		print("entered username validation state")
+		# print("entered username validation state")
 		if not User.objects.filter(username = value.strip()).exists():
 			return value
 		raise serializers.ValidationError('Account already exists')
