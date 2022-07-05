@@ -34,10 +34,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 	def validate_password(self, value):
 		password_validation.validate_password(value, self.instance)
-		passCheck = re.compile("^[A-Za-z0-9@#!$%^&+=]{8,}$")
+		passCheck = re.compile("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
 		if passCheck.fullmatch(value):
 			return value
-		raise serializers.ValidationError("Choose a stronger password. Your password must be a minium of 8 characters.\n It must contain at least 1 Uppercase (A-Z), 1 lowercase (a-z), 1 Number (0-9) and 1 Special character (@#!$%^&+=)")
+		raise serializers.ValidationError("Choose a stronger password. Your password must be a minium of 8 characters. Also, it must contain at least 1 Uppercase (A-Z), 1 lowercase (a-z), 1 Number (0-9) and 1 Special character (#?!@$%^&*-)")
 
 	def validate(self, data):
 		xdata = data.copy()
