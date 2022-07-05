@@ -32,13 +32,13 @@ class AccountAPITestCase(APITestCase):
 		# eo = EventOrganizerFactory()
 		pg = PartyGuestFactory()
 		url = reverse('accounts:register-organizer')
-		data = dict(display_name="Userperson", email="testuser@boiyelove.website", password="somenewpassword")
+		data = dict(display_name="Userperson", email="testuser@boiyelove.website", password="Somepassword123!")
 		response = self.client.post(url, data, format='json')
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(User.objects.count(), 1)
 		user = User.objects.get(email = "testuser@boiyelove.website")
 		self.assertEqual(user.email, "testuser@boiyelove.website")
-		self.assertEqual(user.check_password("somenewpassword"), True)
+		self.assertEqual(user.check_password("Somepassword123!"), True)
 		self.assertEqual(EventOrganizer.objects.count(), 1)
 		self.assertEqual(EventOrganizer.objects.get(user=user).display_name, "Userperson")
 		self.assertEqual(Token.objects.count(), 1)
@@ -50,7 +50,7 @@ class AccountAPITestCase(APITestCase):
 
 		#test login
 		url = reverse('accounts:login-user')
-		data = dict(username="testuser@boiyelove.website", password="somenewpassword")
+		data = dict(username="testuser@boiyelove.website", password="Somepassword123!")
 		response = self.client.post(url, data, format='json')
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
