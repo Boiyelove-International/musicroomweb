@@ -7,13 +7,31 @@ from accounts.models import EventOrganizer, EmailAddress
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from .models import Device
+from .apple_oath import AppleOAuth2, verify_apple_auth
 from .serializers import UserSerializer, PasswordChangeSerializer, PartyGuestRegistration
 
 
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
+
+@csrf_exempt
+def apple_redirect(request):
+    post_data = request.POST
+    print(post_data)
+    query_params = ''
+    for key,value in request.POST.items():
+        query_params += f'{key}={value}&'
+
+    query_params = query_params[:-1]
+    print(query_params)
+    response = HttpResponse("", status=302)
+    response['Location'] = f'intent://callback?{query_params}#Intent;package={settings.PACKAGE_APP};scheme=signinwithapple;end'
+    return response
 
 class OrganizerRegistrationView(APIView):
 
-	#remeber to change this
+	#remember to change this
 	# permission_classes = [IsAdminUser]
 
 	# def get(self, format=None):
@@ -32,7 +50,6 @@ class OrganizerRegistrationView(APIView):
 				serializer.data,
 				status = status.HTTP_201_CREATED
 				)
-		pprint.pprint(serializer.errors)
 		return Response(
 			{
 				"error": True,
@@ -85,14 +102,21 @@ class CustomAuthToken(ObtainAuthToken):
 
 	def post(self, request, *args, **kwargs):
 		social = request.data.get("social", None)
-		pprint.pprint(request.META)
-		print(" ")
-		pprint.pprint(request.data)
+		# pprint.pprint(request.META)
+		# print(" ")
+		# pprint.pprint(request.data)
 		# print("request.data is", request.data)
 		user = None
 		eo = None
 		display_name = None
-		socials = ["facebook", "google"]
+		socials = ["facebook", "google", "apple"]
+
+		email = request.data.get("email", None)
+		display_name = request.data.get("name", None)
+		# print("display name from data is >>>>>>>>>", display_name)
+		image_url = request.data.get("image_url", None)
+		# print("Request.data is", request.data)
+
 		if social in socials :
 			if social == socials[0]:
 				#Todo: Verify Facebook
@@ -115,20 +139,25 @@ class CustomAuthToken(ObtainAuthToken):
 				pass
 
 			elif social == socials[2]:
-				#Todo Verify Google
+				
+				# Reuse - Social Login
+				if request.data.get("id_token", None) and request.data.get("id_token", None):
+					email = verify_apple_auth(
+						request.data.get("auth_token", None),
+						request.data.get("id_token", None))
+				# if email:
+					# create User
+				# else:
+					# Verify Apple
+				#Todo Verify Apple
 							# "access_token" : userCredential?.accessToken,
 				#   "id_token" : userCredential?.idToken,
 				#   "email": data?.email,
 				#   "name": data?.displayName,
 				#   "image_url": data?.photoUrl,
-				pass
 
-			email = request.data.get("email")
-			display_name = request.data.get("name")
-			print("display name from data is", display_name)
-			image_url = request.data.get("image_url")
-			print("Request.data is", request.data)
-			user = User.objects.filter(email = email)
+
+			user = User.objects.filter(email = email.lower())
 			if user.exists():
 				user = user.first()
 			else:
@@ -139,16 +168,19 @@ class CustomAuthToken(ObtainAuthToken):
 			eo = EventOrganizer.objects.filter(user = user)
 			if eo.exists():
 				save_eo = False
-				eo = eo.first()
+				eo = EventOrganizer.objects.get(user = user)
 				if display_name and not eo.display_name:
 					eo.display_name = display_name
-					display_name = eo.display_name
-					save_oe = True
+					eo.save()
 				if image_url and (eo.social_profile_photo != image_url):
 					eo.social_profile_photo = image_url
-					save_eo = True
-				if save_eo:
 					eo.save()
+				if display_name and (display_name != eo.display_name) and display_name != "null null":
+					eo.display_name = display_name
+					eo.save()
+
+				if not display_name and eo.display_name:
+					display_name = eo.display_name
 			else:
 				eo =EventOrganizer.objects.create(
 					user = user ,

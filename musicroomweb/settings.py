@@ -41,7 +41,7 @@ def ip_addresses():
     return ip_list
 
 ALLOWED_HOSTS = ip_addresses()
-ALLOWED_HOSTS += ['137.184.247.196', 'app.musicalroom.co.uk','musicroomweb.herokuapp.com', "127.0.0.1", "localhost"]
+ALLOWED_HOSTS += ['137.184.247.196', 'app.musicalroom.co.uk','musicroomweb.herokuapp.com', "127.0.0.1", "localhost", "10.0.2.2"]
 
 
 
@@ -99,26 +99,26 @@ WSGI_APPLICATION = 'musicroomweb.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'django',
-        'USER': 'django',
-        'PASSWORD': 'fd8a530d784d2c56a2f651ca7d9d6c81',
-        'HOST': 'localhost',
-        'PORT': '',
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'django',
+#         'USER': 'django',
+#         'PASSWORD': 'fd8a530d784d2c56a2f651ca7d9d6c81',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#         }
+# }
+
 FCM_DJANGO_SETTINGS = {
-    "FCM_SERVER_KEY": "AAAA_-BAkME:APA91bGYrbzIDH5h6LgRxuyPRywmCYoSaPbkEVsV3rBLpBiWEd5ce1LLUqLc8W_GPQvi8kUcCRvUyTroE5dCRt464C4x0eZk1wQpL1prX_phI2MyFiIlfDdja96_fwIR8Aoq-ADMakhl",
+    "FCM_SERVER_KEY": "BOIdKzU8VxIG2g7agLjhPD1f78Q6jpm8CB6nY_Yi2QMgKUGyj3MaGZlbI4d0aFiQeDHSGszCZKFulCODIM3Fpmo",
     "APP_VERBOSE_NAME": "MusicRoom",
 
 }
@@ -260,3 +260,20 @@ MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+SOCIAL_AUTH_APPLE_CLIENT_ID = 'uk.co.musicalroom.musicalroom'             # Your client_id com.application.your, aka "Service ID"
+SOCIAL_AUTH_APPLE_TEAM_ID = '77674V65G6'               # Your Team ID, ie K2232113
+SOCIAL_AUTH_APPLE_KEY_ID = '3V3S2H6GKB'                # Your Key ID, ie Y2P99J3N81K
+SOCIAL_AUTH_APPLE_ID_SECRET = """
+-----BEGIN PRIVATE KEY-----
+MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgKLv3QDVOIF3hwZ8I
+fHEMIX5QNClrK/4qQIIpsIp5fTmgCgYIKoZIzj0DAQehRANCAAROuD3nThKjYRBB
+KkWPtBOz7lhxXWp9eojFcREtWflBdzx9/cWM3HSBu8l8sNvpk3PCINZgbvxWi2zU
+ScgtgHFy
+-----END PRIVATE KEY-----"""
+SOCIAL_AUTH_APPLE_ID_SCOPE = ['email', 'name']
+SOCIAL_AUTH_APPLE_ID_EMAIL_AS_USERNAME = True   # If you want to use email as username
+SOCIAL_AUTH_AUTHENTICATION_BACKENDS = (
+    'social_core.backends.apple.AppleIdAuth',
+)
