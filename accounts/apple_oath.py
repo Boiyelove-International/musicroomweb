@@ -67,7 +67,7 @@ def verify_apple_auth(access_token, id_token):
     # if id_token != id_token_received: return None
 
     if id_token_received:
-        decoded = jwt.decode(id_token, settings.SOCIAL_AUTH_APPLE_ID_SECRET, algorithms=['ES256'], options={"verify_signature": False})
+        decoded = jwt.decode(id_token, settings.SOCIAL_AUTH_APPLE_ID_SECRET, audience="uk.co.musicalroom.musicalroom", algorithms=['ES256'], options={"verify_signature": False})
         response_data.update({'email': decoded['email']}) if 'email' in decoded else None
         response_data.update({'uid': decoded['sub']}) if 'sub' in decoded else None
         email = decoded.get("email", None)
@@ -108,7 +108,8 @@ class AppleOAuth2(BaseOAuth2):
         id_token = response_dict.get('id_token', None)
 
         if id_token:
-            decoded = jwt.decode(id_token, '', verify=False)
+            print("code entered here")
+            decoded = jwt.decode(id_token, settings.SOCIAL_AUTH_APPLE_ID_SECRET, audience="uk.co.musicalroom.musicalroom", algorithms=['ES256'], options={"verify_signature": False})
             response_data.update({'email': decoded['email']}) if 'email' in decoded else None
             response_data.update({'uid': decoded['sub']}) if 'sub' in decoded else None
 
