@@ -17,10 +17,10 @@ To restart nginx
 `systemctl restart nginx`
 
 To run test
-`python manage.py test`
+`python3 manage.py test`
 
 To enter django shell
-`python manage.py shell`
+`python3 manage.py shell`
 
 
 To check app status or console logs
