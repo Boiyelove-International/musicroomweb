@@ -8,6 +8,8 @@ from .utils import gen_code
 @receiver(pre_save, sender=Event)
 def add_code(sender, instance, **kwargs):
 	if not instance.code or instance.code=="ABCD":
+		# print("event date is ", instance.event_date)
+		# print("event time is ", instance.event_time)
 		find_code = True
 		while find_code:
 			code = gen_code()
@@ -44,6 +46,9 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
 		if os.path.isfile(old_file.path):
 			os.remove(old_file.path)
 
+# @receiver(post_save, sender=Event)
+# def show_saved_date(sender, instance, created, **kwargs):
+# 	print("event date after saved is", instance.event_date)
 # @receiver(post_save, sender=SongSuggestion)
 # def notify_organizer_of_new_suggestion(sender, instance, created, **kwargs):
 # 	if created:

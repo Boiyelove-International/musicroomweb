@@ -263,11 +263,11 @@ class EventCreateView(ListCreateAPIView):
 	# 	return self.serializer_class
 
 	# @swagger_auto_schema(mwethod="POST", request_body=openapi.Schema(
- #        type=openapi.TYPE_OBJECT,
- #        properties={
- #            'namer': openapi.Schema(type=openapi.TYPE_STRING, description='The desc'),
- #            'body': openapi.Schema(type=openapi.TYPE_STRING, description='The desc'),
- #        }))
+	 #        type=openapi.TYPE_OBJECT,
+	 #        properties={
+	 #            'namer': openapi.Schema(type=openapi.TYPE_STRING, description='The desc'),
+	 #            'body': openapi.Schema(type=openapi.TYPE_STRING, description='The desc'),
+	 #        }))
 
 
 	q = openapi.Parameter('q', in_=openapi.IN_QUERY, description='Query',
@@ -284,6 +284,10 @@ class EventCreateView(ListCreateAPIView):
 		permission_classes = [IsAuthenticated],
 		operation_description='Get event details by name',
 	)
+
+	def post(self, request, *args, **kwargs):
+	 	pprint.pprint(request)
+	 	return self.create(request, *args, **kwargs)
 
 	def get(self, request):
 		qs = Event.objects.all()

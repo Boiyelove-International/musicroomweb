@@ -45,6 +45,18 @@ ALLOWED_HOSTS += ['137.184.247.196', 'app.musicalroom.co.uk','musicroomweb.herok
 
 
 
+# Email Confifurations
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = "notifications@boiyelove.website"
+# EMAIL_HOST = 
+# EMAIL_PORT = 
+# EMAIL_HOST_USER = 
+# EMAIL_HOST_PASSWORD = 
+# EMAIL_USE_TLS = 
+# EMAIL_USE_SSL = 
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -99,23 +111,23 @@ WSGI_APPLICATION = 'musicroomweb.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'django',
-        'USER': 'django',
-        'PASSWORD': 'fd8a530d784d2c56a2f651ca7d9d6c81',
-        'HOST': 'localhost',
-        'PORT': '',
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'django',
+#         'USER': 'django',
+#         'PASSWORD': 'fd8a530d784d2c56a2f651ca7d9d6c81',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#         }
+# }
 
 FCM_DJANGO_SETTINGS = {
     "FCM_SERVER_KEY": "BOIdKzU8VxIG2g7agLjhPD1f78Q6jpm8CB6nY_Yi2QMgKUGyj3MaGZlbI4d0aFiQeDHSGszCZKFulCODIM3Fpmo",
@@ -222,6 +234,8 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
         # 'rest_framework.permissions.IsAuthenticated',
     ],
+    'DATETIME_FORMAT': "%Y-%m-%dT%H:%M:%S.%fZ",
+    "DATE_FORMAT": "%Y-%m-%dT%H:%M:%S.%fZ",
 
 }
 
@@ -234,7 +248,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 

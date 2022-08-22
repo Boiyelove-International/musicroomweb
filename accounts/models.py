@@ -1,6 +1,11 @@
+import uuid
+from datetime import datetime
 from django.db import models
+from django.core.mail import send_mail
+from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
 from model_utils.models import TimeStampedModel
+
 
 # Create your models here.
 class EventOrganizer(TimeStampedModel):
@@ -29,7 +34,6 @@ class PartyGuest(TimeStampedModel):
 
 
 
-
 VALIDATION_TYPE = (('activation', 'activation'),
 	('password_reset', 'password_reset'))
 
@@ -44,7 +48,7 @@ class EmailAddress(TimeStampedModel):
 	def send_code(self):
 		send_mail(
 			'Verify Your Email Address',
-			'Kindly use this code to activate your account \n code: {0}\n Or visit https://app.verifyproperty.online/verify_email/{0}/'.format(self.code),
+			'Kindly use this code to activate your account \n code: {0}\n Or visit https://app.musicalroom.co.uk/verify_email/{0}/'.format(self.code),
 			settings.DEFAULT_FROM_EMAIL, [self.email,]
 			)
 
@@ -80,5 +84,39 @@ class PasswordResetRequest(TimeStampedModel):
 		user.set_password(new_password)
 		self.user.save()
 		self.used = True
+		self.save()
+
+
+class AccountDeleteRequest(TimeStampedModel):
+	user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+	device = models.ManyToManyField(Device)
+	party_guest= models.ForeignKey(PartyGuest, on_delete=models.SET_NULL, null=True)
+	slug = models.UUIDField(default=uuid.uuid4)
+	active = models.BooleanField(default=True)
+	confirmed = models.BooleanField(null=True)
+	date_completed = models.DateTimeField(null=True)
+
+	def send_deletion_mail(self):
+		self.user.is_active = False
+		self.user.save()
+		send_mail(
+			'Confirm Your Account Deletion',
+			'A request has been submitted to delete your account.\n Click the link below to confirm your request and delete your account and all associated data. \n Please note that this process is irreverssible. \n code: {0}\n Or visit https://app.musicalroom.co.uk/delete_account/{0}/ '.format(self.slug),
+			settings.DEFAULT_FROM_EMAIL, [self.user.email,]
+			)
+
+	def delete_user_account(self):
+		try:
+			eo = EventOrganizer.objects.get(user= self.user)
+			for d in eo.devices.all():
+				d.delete()
+		except:
+			pass
+		try:
+			self.user.delete()
+		except:
+			pass
+		self.date_completed = datetime.now()
+		self.active = False
 		self.save()
 

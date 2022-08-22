@@ -6,7 +6,7 @@ from rest_framework.views import APIView, Response
 from accounts.models import EventOrganizer, EmailAddress
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
-from .models import Device
+from .models import Device, AccountDeleteRequest
 from .apple_oath import AppleOAuth2, verify_apple_auth
 from .serializers import UserSerializer, PasswordChangeSerializer, PartyGuestRegistration
 
@@ -230,7 +230,7 @@ class UserDetailView(APIView):
 			raise Http404
 
 	def post(self, request, action_type=None, format=None):
-
+		pprint.pprint(request.META)
 		errors = {}
 		if action_type == 'change_password':
 			serializer = PasswordChangeSerializer(data=request.data, context={'request': request})
@@ -271,6 +271,7 @@ class UserDetailView(APIView):
 			errors.update(serializer.errors)
 
 
+
 		elif action_type == 'verify_email':
 			email = request.data.get('email')
 			code = request.data.get('code')
@@ -291,6 +292,18 @@ class UserDetailView(APIView):
 				email_ver = EmailAddress.objects.get(email=email, user=request.auth.user)
 				email_ver.send_code()
 
+		elif action_type == "delete_account":
+			password = request.data.get("password")
+			print("password is =======>", password)
+			if (request.auth.user.check_password(password)):
+				AccountDeleteRequest.objects.create(
+					user = request.auth.user)
+				return Response(
+					{"detail": "Account Deletion Initiated"},
+					status=status.HTTP_200_OK)
+			else:
+
+				errors.update({'error': 'invalid password'})
 
 		return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -323,3 +336,5 @@ class ForgotPassword(APIView):
 			return Response(status=status.HTTP_200_OK)
 
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+

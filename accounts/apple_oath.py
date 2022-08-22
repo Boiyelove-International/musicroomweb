@@ -58,6 +58,11 @@ def verify_apple_auth(access_token, id_token):
         'grant_type': 'authorization_code',
     }
 
+    if id_token:
+        decoded_id_token = jwt.decode(id_token, settings.SOCIAL_AUTH_APPLE_ID_SECRET, audience="uk.co.musicalroom.musicalroom", algorithms=['ES256'], options={"verify_signature": False})
+        print("decoded id_token is >>>>>>>>>>>", decoded_id_token)
+
+    return email
     res = requests.post(ACCESS_TOKEN_URL, data=data, headers=headers)
     response_dict = res.json()
     print("response dict is >>>>>>>>>>>", response_dict)
@@ -67,7 +72,7 @@ def verify_apple_auth(access_token, id_token):
     # if id_token != id_token_received: return None
 
     if id_token_received:
-        decoded = jwt.decode(id_token, settings.SOCIAL_AUTH_APPLE_ID_SECRET, audience="uk.co.musicalroom.musicalroom", algorithms=['ES256'], options={"verify_signature": False})
+        decoded = jwt.decode(id_token_received, settings.SOCIAL_AUTH_APPLE_ID_SECRET, audience="uk.co.musicalroom.musicalroom", algorithms=['ES256'], options={"verify_signature": False})
         response_data.update({'email': decoded['email']}) if 'email' in decoded else None
         response_data.update({'uid': decoded['sub']}) if 'sub' in decoded else None
         email = decoded.get("email", None)

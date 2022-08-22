@@ -2,7 +2,7 @@ from django.dispatch import receiver
 from django.db.models.signals import pre_save, post_save
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
-from .models import EmailAddress, PasswordResetRequest, EventOrganizer
+from .models import EmailAddress, PasswordResetRequest, EventOrganizer, AccountDeleteRequest
 
 
 
@@ -50,3 +50,8 @@ def sendPassWordResetCode(sender, instance, created, *args, **kwargs):
 			other_requests = PasswordResetRequest.objects.filter(user=instance.user, active=True).exclude(id=instance.id)
 			other_requests.update(active=False)
 
+
+@receiver(post_save, sender=AccountDeleteRequest)
+def send_mail(sender, instance, created, *args, **kwargs):
+	if created:
+		instance.send_deletion_mail()

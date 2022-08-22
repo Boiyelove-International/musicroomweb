@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Delete My Account</title>
+</head>
+<body>
+	<p>
+		<h1>
+			Delete My Account
+		</h1>
+
+	</p>
+	{% if hide_buttons %}
+	<h3>
+		{{message}}
+	</h3>
+	<p> Close this page </p>
+	{% else %}
+	<h3>
+		Are you sure you want to delete your Musical Room Account?
+	</h3>
+	<form method="post" action=".">
+		{% csrf_token %}
+		<p>
+			<label>
+				<input type="radio" name="delete_account" value="complete-deletion">
+				Yes, Delete My Account
+			</label>
+		
+	</p>
+	<p>
+			<label>
+				<input type="radio" name="delete_account" value="cancel-deletion">
+				Cancel Account Deletion Request
+			</label>
+
+	</p>
+	<p>
+		<input type="submit" name="submit_form" value="Submit Request">
+	</p>
+	</form>
+	{% endif %}
+</body>
+</html>
