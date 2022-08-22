@@ -46,15 +46,14 @@ ALLOWED_HOSTS += ['137.184.247.196', 'app.musicalroom.co.uk','musicroomweb.herok
 
 
 # Email Confifurations
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = "notifications@boiyelove.website"
-# EMAIL_HOST = 
-# EMAIL_PORT = 
-# EMAIL_HOST_USER = 
-# EMAIL_HOST_PASSWORD = 
-# EMAIL_USE_TLS = 
-# EMAIL_USE_SSL = 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = "musicalroom@boiyelove.website"
+EMAIL_HOST = "premium5.web-hosting.com"
+EMAIL_PORT = 465
+EMAIL_HOST_USER = "musicalroom@boiyelove.website"
+EMAIL_HOST_PASSWORD = "v,!U^1W#CJ]fv,!U^1W#CJ]f"
+EMAIL_USE_SSL = True
+
 
 
 # Application definition
