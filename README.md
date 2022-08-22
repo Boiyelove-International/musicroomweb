@@ -10,6 +10,10 @@ password: musicroomboiyelove
 
 - Change Database back to postgresql
 
+Run Migrations
+`python3 manage.py makemigrations`
+`python3 manage.py migrate`
+
 To restart gurnicorn
 `systemctl restart gunicorn`
 
