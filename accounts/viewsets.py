@@ -328,20 +328,20 @@ class ForgotPassword(APIView):
 		pprint.pprint(kwargs)
 		action_type = kwargs.get('step', "send_code")
 		serializer = ForgotPasswordSerializer(data = request.data)
-		serializer.is_valid(raise_exception=True)
-		pprint.pprint(serializer.data)
-		pprint.pprint(serializer.errors)
+		# serializer.is_valid(raise_exception=True)
+		# pprint.pprint(serializer.data)
+		# pprint.pprint(serializer.errors)
 		if serializer.is_valid(raise_exception=True):
 			if action_type == "send_code":
 				serializer.create()
-				return Response(status = status.HTTP_201_CREATED)
+				return Response({"detail": "Foorgot password email sent"}, status = status.HTTP_201_CREATED)
 			if action_type == "verify_code":
-				return Response(status=status.HTTP_200_OK)
+				return Response({"detail": "You can now update your password"}, status=status.HTTP_200_OK)
 			if action_type == "change_password":
 				serializer.changePassword()
-				return Response(status=status.HTTP_200_OK)
+				return Response({"detail": "Password Updated Successfully"}, status=status.HTTP_200_OK)
 			
-
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		print("running this error")
+		return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 

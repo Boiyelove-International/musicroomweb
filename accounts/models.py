@@ -113,7 +113,9 @@ class AccountDeleteRequest(TimeStampedModel):
 		except:
 			pass
 		try:
-			self.user.delete()
+			u = User.objects.get(id = self.user.id)
+			u.delete()
+			# self.user.delete()
 		except:
 			pass
 		self.date_completed = datetime.now()

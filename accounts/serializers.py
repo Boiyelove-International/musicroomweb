@@ -142,9 +142,13 @@ class ForgotPasswordSerializer(serializers.Serializer):
 
 	def validate_code(self, value):
 		if value:
+			print("value is ", value)
 			if not PasswordResetRequest.objects.filter(user = self.get_user(),
-			code = value,
-			active= True).exists():
+			code = value, active= True).exists():
+				print("user is", self.get_user())
+				pr = PasswordResetRequest.objects.get(
+			code = value.strip().upper())
+				print("RAISING INVALID CODE")
 				raise serializers.ValidationError("Invalid code")
 		return value
 
