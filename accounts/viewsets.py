@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from .models import Device, AccountDeleteRequest
 from .apple_oath import AppleOAuth2, verify_apple_auth
-from .serializers import UserSerializer, PasswordChangeSerializer, PartyGuestRegistration
+from .serializers import UserSerializer, PasswordChangeSerializer, PartyGuestRegistration, ForgotPasswordSerializer
 
 
 from django.http import HttpResponse
@@ -323,9 +323,15 @@ class EmailVerificationView(APIView):
 class ForgotPassword(APIView):
 
 	def post(self, request, *args, **kwargs):
+		pprint.pprint(self.request.data)
+		pprint.pprint(request.data)
+		pprint.pprint(kwargs)
 		action_type = kwargs.get('step', "send_code")
 		serializer = ForgotPasswordSerializer(data = request.data)
-		if serializer.is_valid():
+		serializer.is_valid(raise_exception=True)
+		pprint.pprint(serializer.data)
+		pprint.pprint(serializer.errors)
+		if serializer.is_valid(raise_exception=True):
 			if action_type == "send_code":
 				serializer.create()
 				return Response(status = status.HTTP_201_CREATED)
@@ -333,7 +339,7 @@ class ForgotPassword(APIView):
 				return Response(status=status.HTTP_200_OK)
 			if action_type == "change_password":
 				serializer.changePassword()
-			return Response(status=status.HTTP_200_OK)
+				return Response(status=status.HTTP_200_OK)
 			
 
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

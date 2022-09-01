@@ -11,12 +11,12 @@ from rest_framework import status
 from rest_framework.test import APIRequestFactory, APITestCase
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
-from .models import EventOrganizer, EmailAddress, PartyGuest, Device
+from .models import EventOrganizer, EmailAddress, PartyGuest, Device, PasswordResetRequest
 from .factories import PartyGuestFactory
 
 # Create your tests here.
 # factory = APIRequestFactory()
-# request = factory.post("url", dict(data), format="json")
+# request = factory.post("url", dict(data), §mat="json")
 
 
 TEST_DIR = "test_data"
@@ -69,8 +69,68 @@ class AccountAPITestCase(APITestCase):
 
 		#test social login no error on repeat create account
 		response = self.client.post(url, data, format='json')
-		pprint.pprint(response.json())
+		# pprint.pprint(response.json())
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+		#test forgot password with invalid data
+		data = {
+		"email": "testuser1234543212345@boiyelove.website"
+		}
+		url = reverse('accounts:forgot-password', kwargs={"step":"send_code"})
+		response = self.client.post(url, data, format='json')
+		# print(response.json())
+		# pprint.pprint(response.json())
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(PasswordResetRequest.objects.count(), 0)
+
+
+		url = reverse('accounts:forgot-password', kwargs={"step":"verify_code"})
+		data = dict(email="testuser@boiyelove.website", code = "erthhgfd")
+		response = self.client.post(url, data, format='json')
+		# pprint.pprint(response.json())
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(PasswordResetRequest.objects.count(), 0)
+
+
+		url = reverse('accounts:forgot-password', kwargs={"step":"change_password"})
+		data = dict(email="testuser@boiyelove.website", code = "dfgfd", new_password="Whohelpme123")
+		response = self.client.post(url, data, format='json')
+		# pprint.pprint(response.json())
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(PasswordResetRequest.objects.count(), 0)
+
+
+
+		#test forgot password with valid data
+		data = {
+		"email": "testuser@boiyelove.website"
+		}
+		url = reverse('accounts:forgot-password', kwargs={"step":"send_code"})
+		response = self.client.post(url, data, format='json')
+		# print(response.json())
+		# pprint.pprint(response.json())
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+		self.assertEqual(PasswordResetRequest.objects.count(), 1)
+
+
+		url = reverse('accounts:forgot-password', kwargs={"step":"verify_code"})
+		pr = PasswordResetRequest.objects.get()
+		data = dict(email="testuser@boiyelove.website", code = pr.code)
+		response = self.client.post(url, data, format='json')
+		# pprint.pprint(response.json())
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(PasswordResetRequest.objects.count(), 1)
+
+
+		url = reverse('accounts:forgot-password', kwargs={"step":"change_password"})
+		data = dict(email="testuser@boiyelove.website", code = pr.code, new_password="Whohelpme123")
+		response = self.client.post(url, data, format='json')
+		# pprint.pprint(response.json())
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(PasswordResetRequest.objects.count(), 1)
+		u = User.objects.get(email="testuser@boiyelove.website")
+		self.assertTrue(u.check_password("Whohelpme123"))
 
 
 
