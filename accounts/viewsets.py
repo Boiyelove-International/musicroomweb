@@ -330,10 +330,11 @@ class ForgotPassword(APIView):
 				serializer.create()
 				return Response(status = status.HTTP_201_CREATED)
 			if action_type == "verify_code":
-				pass
+				return Response(status=status.HTTP_200_OK)
 			if action_type == "change_password":
 				serializer.changePassword()
 			return Response(status=status.HTTP_200_OK)
+			
 
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

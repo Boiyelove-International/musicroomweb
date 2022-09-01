@@ -32,3 +32,13 @@ To check app status or console logs
 
 
 
+Troubleshooting
+`curl --unix-socket /home/django/gunicorn.socket localhost`
+`curl --unix-socket /run/gunicorn.sock localhost`
+`cat /var/log/nginx/error.log`
+
+Socket Path
+`unix:/home/django/gunicorn.socket`
+
+
+

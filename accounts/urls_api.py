@@ -11,4 +11,6 @@ urlpatterns = [
 	path('verify_email/',EmailVerificationView.as_view(), name='verify-email'),
 	path('forgot-password/<slug:step>/', ForgotPassword.as_view(), name='forgot-password'),
 	path('account-settings/<slug:action_type>/', UserDetailView.as_view(), name='update-user-detail'),
+	# path('oauth/', include('rest_framework_social_oauth2.urls')),
+    # path('oauth/apple/', views.apple_redirect),
 	]
