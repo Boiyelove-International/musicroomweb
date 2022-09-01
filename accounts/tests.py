@@ -78,17 +78,12 @@ class AccountAPITestCase(APITestCase):
 
 
 	def test_send_mail(self):
-subject = "Test Mail " +  str(datetime.now())
-mail.
-from django.core.mail import send_mail
-from django.conf import settings
-from datetime import datetime
-subject = "Test Mail " +  str(datetime.now())
-send_mail(subject, "Here is the message",
-	settings.DEFAULT_FROM_EMAIL, ['daahrmmieboiye@gmail.com'],
-	fail_silently=False)
-self.assertEqual(len(mail.outbox), 1)
-self.assertEqual(mail.outbox[0].subject, subject)
+		subject = "Test Mail " +  str(datetime.now())
+		mail.send_mail(subject, "Here is the message",
+			settings.DEFAULT_FROM_EMAIL, ['daahrmmieboiye@gmail.com'],
+			fail_silently=False)
+		self.assertEqual(len(mail.outbox), 1)
+		self.assertEqual(mail.outbox[0].subject, subject)
 
 	def test_party_guest_create_account(self):
 		url = reverse('accounts:register-guest')
