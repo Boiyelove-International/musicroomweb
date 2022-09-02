@@ -61,6 +61,7 @@ def verify_apple_auth(access_token, id_token):
     if id_token:
         decoded_id_token = jwt.decode(id_token, settings.SOCIAL_AUTH_APPLE_ID_SECRET, audience="uk.co.musicalroom.musicalroom", algorithms=['ES256'], options={"verify_signature": False})
         print("decoded id_token is >>>>>>>>>>>", decoded_id_token)
+        email = decoded_id_token.get("email", None)
 
     return email
     res = requests.post(ACCESS_TOKEN_URL, data=data, headers=headers)
