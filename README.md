@@ -30,6 +30,8 @@ To enter django shell
 To check app status or console logs
 `systemctl status gunicorn`
 
+<!-- systemctl restart gunicorn && systemctl restart nginx
+python3 manage.py test -->
 
 
 Troubleshooting

@@ -44,23 +44,13 @@ ALLOWED_HOSTS = ip_addresses()
 ALLOWED_HOSTS += ['137.184.247.196', 'app.musicalroom.co.uk','musicroomweb.herokuapp.com', "127.0.0.1", "localhost", "10.0.2.2"]
 
 
-
-# Email Confifurations
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-DEFAULT_FROM_EMAIL = "musicalroom@boiyelove.website"
-EMAIL_HOST = "premium5.web-hosting.com"
+DEFAULT_FROM_EMAIL = "notifications@musicalroom.co.uk"
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 465
-EMAIL_HOST_USER = "musicalroom@boiyelove.website"
-EMAIL_HOST_PASSWORD = "v,!U^1W#CJ]fv,!U^1W#CJ]f"
+EMAIL_HOST_USER = "notifications@musicalroom.co.uk"
+EMAIL_HOST_PASSWORD = "RufusandBees1."
 EMAIL_USE_SSL = True
-
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# DEFAULT_FROM_EMAIL = "notifications@musicalroom.co.uk"
-# EMAIL_HOST = "smtp.gmail.com"
-# EMAIL_PORT = 465
-# EMAIL_HOST_USER = "notifications@musicalroom.co.uk"
-# EMAIL_HOST_PASSWORD = "RufusandBees1."
-# EMAIL_USE_SSL = True
 
 
 
@@ -119,23 +109,23 @@ WSGI_APPLICATION = 'musicroomweb.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'django',
-        'USER': 'django',
-        'PASSWORD': 'fd8a530d784d2c56a2f651ca7d9d6c81',
-        'HOST': 'localhost',
-        'PORT': '',
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'django',
+#         'USER': 'django',
+#         'PASSWORD': 'fd8a530d784d2c56a2f651ca7d9d6c81',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#         }
+# }
 
 FCM_DJANGO_SETTINGS = {
     "FCM_SERVER_KEY": "BOIdKzU8VxIG2g7agLjhPD1f78Q6jpm8CB6nY_Yi2QMgKUGyj3MaGZlbI4d0aFiQeDHSGszCZKFulCODIM3Fpmo",

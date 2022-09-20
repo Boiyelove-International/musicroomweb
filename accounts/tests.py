@@ -133,18 +133,6 @@ class AccountAPITestCase(APITestCase):
 		self.assertTrue(u.check_password("Whohelpme123"))
 
 
-
-
-
-
-	def test_send_mail(self):
-		subject = "Test Mail " +  str(datetime.now())
-		mail.send_mail(subject, "Here is the message",
-			settings.DEFAULT_FROM_EMAIL, ['daahrmmieboiye@gmail.com'],
-			fail_silently=False)
-		self.assertEqual(len(mail.outbox), 1)
-		self.assertEqual(mail.outbox[0].subject, subject)
-
 	def test_party_guest_create_account(self):
 		url = reverse('accounts:register-guest')
 		data = dict(display_name="milo", 
@@ -166,3 +154,28 @@ def tearDownModule():
         shutil.rmtree(TEST_DIR)
     except OSError:
         pass
+
+
+# ID:813500069884-gakf6eljqam8fh9r6ikcf8k8abbnrf84.apps.googleusercontent.com
+# SK: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
+
+# gmail_oauth2 
+# gmail_oauth2 --generate_oauth2_token \
+#   --client_id="813500069884-gakf6eljqam8fh9r6ikcf8k8abbnrf84.apps.googleusercontent.com" \
+#   --client_secret="SK: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" \
+#   --scope="https://www.googleapis.com/auth/gmail.send"
+
+def test_send_mail():
+	from datetime import datetime
+	from django.conf import settings
+	from django.core import mail
+	subject = "Test Mail " +  str(datetime.now())
+	mail.send_mail(subject, "Here is the message",
+		settings.DEFAULT_FROM_EMAIL, ['daahrmmieboiye@gmail.com'],
+		fail_silently=False)
+	len(mail.outbox)
+
+# test_send_mail()
+	# self.assertEqual(len(mail.outbox), 1)
+	# self.assertEqual(mail.outbox[0].subject, subject)
+
