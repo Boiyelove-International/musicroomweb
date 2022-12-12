@@ -109,23 +109,23 @@ WSGI_APPLICATION = 'musicroomweb.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'django',
-        'USER': 'django',
-        'PASSWORD': 'fd8a530d784d2c56a2f651ca7d9d6c81',
-        'HOST': 'localhost',
-        'PORT': '',
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'django',
+#         'USER': 'django',
+#         'PASSWORD': 'fd8a530d784d2c56a2f651ca7d9d6c81',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#         }
+# }
 
 FCM_DJANGO_SETTINGS = {
     "FCM_SERVER_KEY": "BOIdKzU8VxIG2g7agLjhPD1f78Q6jpm8CB6nY_Yi2QMgKUGyj3MaGZlbI4d0aFiQeDHSGszCZKFulCODIM3Fpmo",

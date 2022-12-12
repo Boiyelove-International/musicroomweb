@@ -23,11 +23,13 @@ am = applemusicpy.AppleMusic(secret_key=secret_key, key_id=key_id, team_id=team_
 def clean_song_data(song):
 	attributes = song['attributes']
 	artwork = attributes["artwork"]["url"].replace("{w}", "300").replace("{h}", "300")
+	apple_music_link = attributes["url"]
 	return dict(song_title = attributes["name"],
 						artist_name= attributes["artistName"],
 						song_url = attributes["previews"][0]["url"],
 						album_art = artwork,
-						apple_song_id =  "%s" % song["id"])
+						apple_song_id =  "%s" % song["id"],
+						apple_music_link =  apple_music_link)
 
 def check_song_in_list(song_dict, list_item):
 		item = "{}".format(song_dict["id"])
@@ -39,7 +41,7 @@ def search_music(title):
 	url = "https://api.music.apple.com/v1/catalog/us/search?term=%s&limit=25&types=songs" % title.replace(" ", "+")
 	results = am._get(url)
 	# results = am.search(title, storefront="ng", types=['songs',], limit=25)
-	# pprint.pprint(results)
+	pprint.pprint(results)
 	result_list = []
 	if results['results']:
 		songs = results["results"]["songs"]["data"]

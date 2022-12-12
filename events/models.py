@@ -17,6 +17,7 @@ class Song(TimeStampedModel):
 	song_url = models.URLField(null=True)
 	play_count = models.PositiveIntegerField(default=0)
 	apple_song_id = models.CharField(max_length=30, unique=True)
+	apple_music_link = models.URLField(null=True)
 	# suggestion_count = models.PositiveIntegerField(default=0)
 
 	def __str__(self):
